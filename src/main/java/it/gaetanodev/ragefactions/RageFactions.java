@@ -3,6 +3,7 @@ package it.gaetanodev.ragefactions;
 import it.gaetanodev.ragefactions.Commands.FactionCommands;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,12 +21,7 @@ public final class RageFactions extends JavaPlugin {
     private File factionsFile;
     private FileConfiguration factionsConfig;
     private FactionManager factionManager;
-    private Map<String, Faction> factions;
 
-    public RageFactions() {
-        this.factions = new HashMap<>();
-
-    }
 
     @Override
     public void onEnable() {
@@ -71,6 +67,7 @@ public final class RageFactions extends JavaPlugin {
         }
     }
 
+    // Metodo saveFactions()
     public void saveFactions() {
         Map<String, Faction> factions = factionManager.factions;
         if (factions != null) {
@@ -79,7 +76,11 @@ public final class RageFactions extends JavaPlugin {
                 if (faction != null) {
                     String path = "Factions." + entry.getKey() + ".";
                     factionsConfig.set(path + "Name", entry.getValue().getName());
-                    factionsConfig.set(path + "Leader", faction.getLeader().getUniqueId().toString());
+                    UUID leaderUUID = faction.getLeaderUUID();
+                    if (leaderUUID != null) {
+                        factionsConfig.set(path + "LeaderUUID", leaderUUID.toString());
+                        factionsConfig.set(path + "LeaderName", faction.getLeader().getName());
+                    }
                     List<String> memberUUIDs = faction.getMembers()
                             .stream().map(member -> member.getUniqueId().toString())
                             .collect(Collectors.toList());
@@ -101,25 +102,31 @@ public final class RageFactions extends JavaPlugin {
         if (factionsSection != null) {
             for (String factionName : factionsSection.getKeys(false)) {
                 String path = "Factions." + factionName + ".";
-                UUID leaderUUID = UUID.fromString(factionsConfig.getString(path + "Leader"));
-                List<String> memberUUIDStrings = factionsConfig.getStringList(path + "Members");
-                List<Player> members = memberUUIDStrings.stream()
-                        .map(UUID::fromString)
-                        .map(Bukkit::getPlayer)
-                        .collect(Collectors.toList());
-                Faction faction = new Faction(factionName);
-                faction.setLeader(Bukkit.getPlayer(leaderUUID));
-                for (Player member : members) {
-                    faction.addMember(member);
+                UUID leaderUUID = UUID.fromString(factionsConfig.getString(path + "LeaderUUID"));
+                String leaderName = factionsConfig.getString(path + "LeaderName");
+                OfflinePlayer leader = Bukkit.getOfflinePlayer(leaderUUID);
+                if (leader.hasPlayedBefore()) {
+                    List<String> memberUUIDStrings = factionsConfig.getStringList(path + "Members");
+                    List<OfflinePlayer> members = memberUUIDStrings.stream()
+                            .map(UUID::fromString)
+                            .map(Bukkit::getOfflinePlayer)
+                            .collect(Collectors.toList());
+                    Faction faction = new Faction(factionName);
+                    faction.setLeader(leader);
+                    for (OfflinePlayer member : members) {
+                        if (member.hasPlayedBefore()) {
+                            faction.addMember(member);
+                        }
+                    }
+                    factionManager.factions.put(factionName, faction);
+                    factionManager.playerFactions.put(leaderUUID.toString(), factionName);
+                    factionManager.playerFactions.put(leader.getName(), factionName);
+                } else {
+                    getLogger().info("Leader non valido");
                 }
-                factionManager.factions.put(factionName, faction);
-                factionManager.playerFactions.put(leaderUUID.toString(), factionName);
             }
         }
     }
-
-
-
 
     @Override
     public void onDisable() {

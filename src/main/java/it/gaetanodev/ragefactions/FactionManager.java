@@ -1,10 +1,12 @@
 package it.gaetanodev.ragefactions;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class FactionManager {
     public Map<String, Faction> factions = new HashMap<>();
@@ -15,10 +17,14 @@ public class FactionManager {
             return;
         }
         for (Faction faction : factions.values()) {
-            if (faction.getLeaderName().equals(leader.getName())) {
+            if (faction.getLeader() != null && faction.getLeader().getName().equals(leader.getName())) {
                 leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-alreadyleader")));
                 return;
             }
+        }
+        if (playerFactions.containsKey(leader.getName())) {
+            leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-alreadyin")));
+            return;
         }
         Faction newFaction = new Faction(name, leader);
         newFaction.setLeader(leader);
@@ -39,7 +45,7 @@ public class FactionManager {
         }
         faction.addMember(player);
         playerFactions.put(player.getName(), factionName);
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-joined" + factionName + ".")));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-joined")));
     }
     // ALTRI METODI
 
@@ -50,15 +56,15 @@ public class FactionManager {
         }
         return null;
     }
-    public Set<Player> getFactionMembers(String factionName) {
+    public Set<OfflinePlayer> getFactionMembers(String factionName) {
         if (factions.containsKey(factionName)) {
             return factions.get(factionName).getMembers();
         }
         return null;
     }
-    public String getFactionLeader(String factionName) {
+    public UUID getFactionLeader(String factionName) {
         if (factions.containsKey(factionName)) {
-            return factions.get(factionName).getLeaderName();
+            return factions.get(factionName).getLeaderUUID();
         }
         return null;
     }
