@@ -1,7 +1,9 @@
 package it.gaetanodev.ragefactions;
 
 import it.gaetanodev.ragefactions.Commands.FactionCommands;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -9,10 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class RageFactions extends JavaPlugin {
@@ -51,6 +50,9 @@ public final class RageFactions extends JavaPlugin {
         saveDefaultConfig();
         // Carica i Factions
         createFactionsFile();
+        // Carica le fazioni
+        loadFactions();
+
 
     }
 
@@ -77,11 +79,11 @@ public final class RageFactions extends JavaPlugin {
                 if (faction != null) {
                     String path = "Factions." + entry.getKey() + ".";
                     factionsConfig.set(path + "Name", entry.getValue().getName());
-                    factionsConfig.set(path + "Leader", faction.getLeaderName());
-                    List<String> memberNames = faction.getMembers()
-                            .stream().map(Player::getName)
+                    factionsConfig.set(path + "Leader", faction.getLeader().getUniqueId().toString());
+                    List<String> memberUUIDs = faction.getMembers()
+                            .stream().map(member -> member.getUniqueId().toString())
                             .collect(Collectors.toList());
-                    factionsConfig.set(path + "Members", memberNames);
+                    factionsConfig.set(path + "Members", memberUUIDs);
                 }
                 try {
                     factionsConfig.save(factionsFile);
@@ -92,6 +94,31 @@ public final class RageFactions extends JavaPlugin {
             }
         }
     }
+
+    // Carica le factions.yml
+    public void loadFactions() {
+        ConfigurationSection factionsSection = factionsConfig.getConfigurationSection("Factions");
+        if (factionsSection != null) {
+            for (String factionName : factionsSection.getKeys(false)) {
+                String path = "Factions." + factionName + ".";
+                UUID leaderUUID = UUID.fromString(factionsConfig.getString(path + "Leader"));
+                List<String> memberUUIDStrings = factionsConfig.getStringList(path + "Members");
+                List<Player> members = memberUUIDStrings.stream()
+                        .map(UUID::fromString)
+                        .map(Bukkit::getPlayer)
+                        .collect(Collectors.toList());
+                Faction faction = new Faction(factionName);
+                faction.setLeader(Bukkit.getPlayer(leaderUUID));
+                for (Player member : members) {
+                    faction.addMember(member);
+                }
+                factionManager.factions.put(factionName, faction);
+                factionManager.playerFactions.put(leaderUUID.toString(), factionName);
+            }
+        }
+    }
+
+
 
 
     @Override

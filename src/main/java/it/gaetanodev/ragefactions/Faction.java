@@ -8,6 +8,7 @@ public class Faction {
     private Player leader;
     private Set<Player> members;
 
+
     public Faction(String name, Player leader) {
         this.name = name;
         this.leader = leader;
@@ -17,6 +18,7 @@ public class Faction {
 
     public Faction(String name) {
         this.name = name;
+        this.members = new HashSet<>();
     }
 
     public void addMember(Player player) {
@@ -31,5 +33,18 @@ public class Faction {
     public Set<Player> getMembers() {
         return new HashSet<>(members);
     }
+    public void setLeader(Player leader) {
+        this.leader = leader;
+        if (this.members == null) {
+            this.members = new HashSet<>();
+        }
+        if (!this.members.contains(leader)) {
+            this.members.add(leader);
+        }
+    }
+    public Player getLeader() {
+        return leader;
+    }
+
 
 }

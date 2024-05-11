@@ -36,7 +36,6 @@ public class FactionCommands implements CommandExecutor {
                 }
                 String factionName = args[1];
                 factionManager.createFaction(factionName, player);
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-created")));
                 RageFactions.instance.saveFactions();
                 break;
 
