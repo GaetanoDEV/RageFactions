@@ -1,0 +1,9 @@
+name: RageFactions
+version: '${project.version}'
+main: it.gaetanodev.ragefactions.RageFactions
+api-version: '1.20'
+commands:
+  f:
+    description: Comandi Fazioni
+    usage: /f <arg>
+    

@@ -1,0 +1,7 @@
+player-command: "&cQuesto messaggio è eseguibile solo da un giocatore."
+faction-createnospecific: "&cDevi specificare un nome"
+faction-namespecific: "&cDevispecificare un nome"
+faction-alreadyexist: "&cLa fazione è già esistente"
+faction-created: "&bFazione creata correttamente!"
+faction-dontexist: "&cLa fazione specificata non esiste"
+faction-joined: "&bTi sei unito alla fazione:"
