@@ -14,10 +14,12 @@ import java.util.Map;
 
 public class FactionCommands implements CommandExecutor {
     private FactionManager factionManager;
+
     public FactionCommands(FactionManager factionManager) {
         this.factionManager = factionManager;
 
     }
+
     public Map<String, Faction> factions = new HashMap<>();
 
     @Override
@@ -45,7 +47,6 @@ public class FactionCommands implements CommandExecutor {
                 RageFactions.instance.saveFactions();
                 break;
 
-
             // Comando join
             case "join":
                 if (args.length < 2) {
@@ -56,9 +57,29 @@ public class FactionCommands implements CommandExecutor {
                 factionManager.joinFaction(player, factionNameJoin);
                 RageFactions.instance.saveFactions();
                 break;
-                // ALTRI COMANDI
-        }
-        return  true;
-    }
 
+            // Comando disband
+            case "disband":
+                String factionNameDisband = factionManager.playerFactions.get(player.getName());
+                if (factionNameDisband != null) {
+                    Faction faction = factionManager.factions.get(factionNameDisband);
+                    if (faction != null && faction.getLeader().equals(player)) {
+                        factionManager.factions.remove(factionNameDisband);
+                        factionManager.playerFactions.remove(player.getName());
+                        // Rimuovi la fazione dal file factions.yml
+                        RageFactions.instance.factionsConfig.set("Factions." + factionNameDisband, null);
+                        RageFactions.instance.saveFactions();
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-disbanded")));
+                    } else {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notleader")));
+                    }
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-dontexist")));
+                }
+                break;
+
+            // ALTRI COMANDI
+        }
+        return true;
+    }
 }

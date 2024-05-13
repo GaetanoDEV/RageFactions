@@ -19,7 +19,7 @@ public final class RageFactions extends JavaPlugin {
     public static RageFactions instance;
     public static Messages messages;
     private File factionsFile;
-    private FileConfiguration factionsConfig;
+    public FileConfiguration factionsConfig;
     private FactionManager factionManager;
 
 
@@ -54,6 +54,7 @@ public final class RageFactions extends JavaPlugin {
 
     // METODO FACTIONS CONFIG
     private void createFactionsFile() {
+        this.factionsConfig = factionsConfig;
         factionsFile = new File(getDataFolder(), "factions.yml");
         if (!factionsFile.exists()) {
             factionsFile.getParentFile().mkdirs();
@@ -69,32 +70,31 @@ public final class RageFactions extends JavaPlugin {
 
     // Metodo saveFactions()
     public void saveFactions() {
-        Map<String, Faction> factions = factionManager.factions;
-        if (factions != null) {
-            for (Map.Entry<String, Faction> entry : factions.entrySet()) {
-                Faction faction = entry.getValue();
-                if (faction != null) {
-                    String path = "Factions." + entry.getKey() + ".";
-                    factionsConfig.set(path + "Name", entry.getValue().getName());
-                    UUID leaderUUID = faction.getLeaderUUID();
-                    if (leaderUUID != null) {
-                        factionsConfig.set(path + "LeaderUUID", leaderUUID.toString());
-                        factionsConfig.set(path + "LeaderName", faction.getLeader().getName());
-                    }
-                    List<String> memberUUIDs = faction.getMembers()
-                            .stream().map(member -> member.getUniqueId().toString())
-                            .collect(Collectors.toList());
-                    factionsConfig.set(path + "Members", memberUUIDs);
-                }
-                try {
-                    factionsConfig.save(factionsFile);
-                } catch (Exception e) {
-                    getLogger().severe("Impossibile salvare factions.yml");
-                    e.printStackTrace();
-                }
-            }
+        try {
+            factionsConfig.save(factionsFile);
+        } catch (Exception e) {
+            getLogger().severe("Impossibile salvare factions.yml");
+            e.printStackTrace();
         }
     }
+
+    public void saveFaction(Faction faction) {
+        String path = "Factions." + faction.getName() + ".";
+        RageFactions.instance.factionsConfig.set(path + "Name", faction.getName());
+        RageFactions.instance.factionsConfig.set(path + "LeaderUUID", faction.getLeaderUUID().toString());
+        RageFactions.instance.factionsConfig.set(path + "LeaderName", faction.getLeader().getName());
+        List<String> memberUUIDs = faction.getMembers()
+                .stream().map(member -> member.getUniqueId().toString())
+                .collect(Collectors.toList());
+        RageFactions.instance.factionsConfig.set(path + "Members", memberUUIDs);
+        try {
+            RageFactions.instance.factionsConfig.save(factionsFile);
+        } catch (Exception e) {
+            getLogger().severe("Impossibile salvare factions.yml");
+            e.printStackTrace();
+        }
+    }
+
 
     // Carica le factions.yml
     public void loadFactions() {

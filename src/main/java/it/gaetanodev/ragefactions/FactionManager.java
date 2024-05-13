@@ -31,6 +31,7 @@ public class FactionManager {
         factions.put(name, newFaction);
         playerFactions.put(leader.getName(), name);
         leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-created")));
+        RageFactions.instance.saveFaction(newFaction);
     }
 
     public void joinFaction(Player player, String factionName) {
