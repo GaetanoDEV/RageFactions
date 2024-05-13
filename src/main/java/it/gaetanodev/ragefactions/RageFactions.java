@@ -37,8 +37,6 @@ public final class RageFactions extends JavaPlugin {
         this.getCommand("f").setExecutor(new FactionCommands(factionManager));
         this.getCommand("f").setTabCompleter(new FactionCommands(factionManager));
 
-
-
         // Definisci instance in Main
         instance = this;
         // Carica i messaggi
@@ -49,7 +47,6 @@ public final class RageFactions extends JavaPlugin {
         createFactionsFile();
         // Carica le fazioni
         loadFactions();
-
 
     }
 

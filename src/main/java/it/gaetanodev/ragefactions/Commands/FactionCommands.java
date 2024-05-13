@@ -76,6 +76,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                         RageFactions.instance.saveFactions();
                         Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("the-faction") + " " + factionNameDisband + " " + RageFactions.messages.getMessage("faction-broadcast-disband") + " " + faction.getLeaderName()));
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-disbanded")));
+                        RageFactions.instance.reloadFactions();
                     } else {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notleader")));
                     }

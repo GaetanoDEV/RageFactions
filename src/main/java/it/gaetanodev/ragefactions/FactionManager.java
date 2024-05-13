@@ -50,8 +50,11 @@ public class FactionManager {
         }
         faction.addMember(player);
         playerFactions.put(player.getName(), factionName);
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-joined" + " " + factionName)));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-joined") + " " + factionName));
+        // Salva la fazione nel factions.yml
+        RageFactions.instance.saveFaction(faction);
     }
+
     // ALTRI METODI
 
     // METODI GET
