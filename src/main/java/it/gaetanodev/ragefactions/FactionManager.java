@@ -1,5 +1,6 @@
 package it.gaetanodev.ragefactions;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -32,6 +33,7 @@ public class FactionManager {
         newFaction.setLeader(leader);
         factions.put(name, newFaction);
         playerFactions.put(leader.getName(), name);
+        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("the-faction") + " " + name + " " + RageFactions.messages.getMessage("faction-broadcast") + " " + leader.getName()));
         leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction") + " " + name + " " + RageFactions.messages.getMessage("faction-created")));
         RageFactions.instance.saveFaction(newFaction);
     }

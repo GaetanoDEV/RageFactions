@@ -1,6 +1,7 @@
 package it.gaetanodev.ragefactions;
 
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,8 +32,8 @@ public class Faction {
         return name;
     }
 
-    public UUID getLeaderName() {
-        return leader != null ? leader.getUniqueId() : null;
+    public String getLeaderName() {
+        return leader != null ? leader.getName() : null;
     }
 
     public UUID getLeaderUUID() {

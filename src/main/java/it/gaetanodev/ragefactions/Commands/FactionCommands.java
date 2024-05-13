@@ -3,6 +3,7 @@ package it.gaetanodev.ragefactions.Commands;
 import it.gaetanodev.ragefactions.Faction;
 import it.gaetanodev.ragefactions.FactionManager;
 import it.gaetanodev.ragefactions.RageFactions;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -73,6 +74,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                         // Rimuovi la fazione dal file factions.yml
                         RageFactions.instance.factionsConfig.set("Factions." + factionNameDisband, null);
                         RageFactions.instance.saveFactions();
+                        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("the-faction") + " " + factionNameDisband + " " + RageFactions.messages.getMessage("faction-broadcast-disband") + " " + faction.getLeaderName()));
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-disbanded")));
                     } else {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notleader")));
