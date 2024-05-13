@@ -1,4 +1,5 @@
 package it.gaetanodev.ragefactions;
+
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -11,6 +12,7 @@ import java.util.UUID;
 public class FactionManager {
     public Map<String, Faction> factions = new HashMap<>();
     public Map<String, String> playerFactions = new HashMap<>();
+
     public void createFaction(String name, Player leader) {
         if (factions.containsKey(name)) {
             leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-alreadyexist")));
@@ -57,12 +59,14 @@ public class FactionManager {
         }
         return null;
     }
+
     public Set<OfflinePlayer> getFactionMembers(String factionName) {
         if (factions.containsKey(factionName)) {
             return factions.get(factionName).getMembers();
         }
         return null;
     }
+
     public UUID getFactionLeader(String factionName) {
         if (factions.containsKey(factionName)) {
             return factions.get(factionName).getLeaderUUID();

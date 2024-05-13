@@ -15,7 +15,8 @@ public class Messages {
         this.plugin = plugin;
         createMessagesFile();
     }
-// Crea file messages.yml
+
+    // Crea file messages.yml
     private void createMessagesFile() {
         messageFile = new File(plugin.getDataFolder(), "messages.yml");
         if (!messageFile.exists()) {
@@ -23,7 +24,8 @@ public class Messages {
         }
         messagesConfig = YamlConfiguration.loadConfiguration(messageFile);
     }
-// Metodo getMessage
+
+    // Metodo getMessage
     public String getMessage(String path) {
         return messagesConfig.getString(path);
     }

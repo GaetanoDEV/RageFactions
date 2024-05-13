@@ -7,19 +7,18 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public final class RageFactions extends JavaPlugin {
     public static RageFactions instance;
     public static Messages messages;
-    private File factionsFile;
     public FileConfiguration factionsConfig;
+    private File factionsFile;
     private FactionManager factionManager;
 
 
@@ -78,6 +77,7 @@ public final class RageFactions extends JavaPlugin {
         }
     }
 
+    // Salva una Faction nel factionFile
     public void saveFaction(Faction faction) {
         String path = "Factions." + faction.getName() + ".";
         RageFactions.instance.factionsConfig.set(path + "Name", faction.getName());

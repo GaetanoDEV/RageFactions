@@ -13,14 +13,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FactionCommands implements CommandExecutor {
+    public Map<String, Faction> factions = new HashMap<>();
     private FactionManager factionManager;
 
     public FactionCommands(FactionManager factionManager) {
         this.factionManager = factionManager;
 
     }
-
-    public Map<String, Faction> factions = new HashMap<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
