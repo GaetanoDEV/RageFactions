@@ -97,6 +97,13 @@ public final class RageFactions extends JavaPlugin {
         }
     }
 
+    // Metodo di reload delle fazioni
+    public void reloadFactions() {
+        factionManager.factions.clear();
+        factionManager.playerFactions.clear();
+        RageFactions.instance.loadFactions();
+    }
+
 
     // Carica le factions.yml
     public void loadFactions() {

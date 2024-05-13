@@ -15,3 +15,8 @@ faction-disbanded: "&bFazione eliminato con successo"
 faction-notleader: "&cNon sei il capo di questa fazione."
 faction-none: "&cNon ci sono Fazioni salvate."
 faction-list: "&bLista Fazioni:"
+
+
+# ADMIN
+faction-reloaded: "&bRageFaction ricaricato correttamente"
+no-permission: "&cNon hai il permesso."
