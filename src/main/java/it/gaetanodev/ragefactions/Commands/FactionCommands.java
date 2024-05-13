@@ -88,7 +88,6 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 }
                 break;
 
-
             // Comando list
             case "list":
                 ConfigurationSection factionsSection = RageFactions.instance.factionsConfig.getConfigurationSection("Factions");
@@ -138,8 +137,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 }
                 break;
 
-
-            // Comando reload
+                // Comando reload
             case "reload":
                 if (player.hasPermission("ragefactions.admin")) {
                     // Ricarica i messaggi
@@ -154,7 +152,35 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 }
                 break;
 
-                // ALTRI COMANDI
+            // Comando leave
+            case "leave":
+                String factionNameLeave = factionManager.playerFactions.get(player.getUniqueId().toString());
+                if (factionNameLeave != null) {
+                    Faction faction = factionManager.factions.get(factionNameLeave);
+                    if (faction != null) {
+                        if (faction.getLeader().equals(player)) {
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-leadercannotleave")));
+                        } else {
+                            faction.getMembers().remove(player);
+                            factionManager.playerFactions.remove(player.getUniqueId().toString());
+                            // Rimuovi l'UUID del giocatore dal factions.yml
+                            List<String> memberUUIDs = RageFactions.instance.factionsConfig.getStringList("Factions." + factionNameLeave + ".Members");
+                            memberUUIDs.remove(player.getUniqueId().toString());
+                            RageFactions.instance.factionsConfig.set("Factions." + factionNameLeave + ".Members", memberUUIDs);
+                            RageFactions.instance.saveFactions();
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-left")));
+                            RageFactions.instance.reloadFactions();
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-dontexist")));
+                    }
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
+                }
+                break;
+
+
+            // ALTRI COMANDI
 }
         return true;
     }
@@ -163,7 +189,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband", "list", "kick", "reload")
+            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "reload")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
                     .collect(Collectors.toList());
