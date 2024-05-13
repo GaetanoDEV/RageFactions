@@ -5,6 +5,7 @@ import it.gaetanodev.ragefactions.FactionManager;
 import it.gaetanodev.ragefactions.RageFactions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -63,20 +64,22 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 RageFactions.instance.saveFactions();
                 break;
 
-            // Comando disband
+// Comando disband
             case "disband":
-                String factionNameDisband = factionManager.playerFactions.get(player.getName());
+                String factionNameDisband = factionManager.playerFactions.get(player.getUniqueId().toString());
                 if (factionNameDisband != null) {
                     Faction faction = factionManager.factions.get(factionNameDisband);
                     if (faction != null && faction.getLeader().equals(player)) {
                         factionManager.factions.remove(factionNameDisband);
-                        factionManager.playerFactions.remove(player.getName());
-                        // Rimuovi la fazione dal file factions.yml
+                        // Rimuovi tutti i membri della fazione dalla mappa
+                        for (OfflinePlayer member : faction.getMembers()) {
+                            factionManager.playerFactions.remove(member.getUniqueId().toString());
+                        }
+                        // Rimuovi la fazione dal factions.yml
                         RageFactions.instance.factionsConfig.set("Factions." + factionNameDisband, null);
                         RageFactions.instance.saveFactions();
                         Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("the-faction") + " " + factionNameDisband + " " + RageFactions.messages.getMessage("faction-broadcast-disband") + " " + faction.getLeaderName()));
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-disbanded")));
-                        RageFactions.instance.reloadFactions();
                     } else {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notleader")));
                     }
@@ -84,6 +87,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-dontexist")));
                 }
                 break;
+
 
             // Comando list
             case "list":
@@ -98,7 +102,44 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 }
                 break;
 
-           // Comando reload
+// Comando kick
+            case "kick":
+                if (args.length < 2) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kicknospecific")));
+                    return true;
+                }
+                String factionNameKick = factionManager.playerFactions.get(player.getUniqueId().toString());
+                if (factionNameKick != null) {
+                    Faction faction = factionManager.factions.get(factionNameKick);
+                    if (faction != null && faction.getLeader().equals(player)) {
+                        String memberName = args[1];
+                        OfflinePlayer memberToKick = Bukkit.getOfflinePlayer(memberName);
+                        // Verifica se il giocatore è un membro di una fazione
+                        List<String> memberUUIDs = RageFactions.instance.factionsConfig.getStringList("Factions." + factionNameKick + ".Members");
+                        if (memberUUIDs.contains(memberToKick.getUniqueId().toString())) {
+                            faction.getMembers().remove(memberToKick);
+                            factionManager.playerFactions.remove(memberToKick.getUniqueId().toString());
+                            // Rimuovi l'UUID del giocatore dal factions.yml
+                            memberUUIDs.remove(memberToKick.getUniqueId().toString());
+                            RageFactions.instance.factionsConfig.set("Factions." + factionNameKick + ".Members", memberUUIDs);
+                            RageFactions.instance.saveFactions();
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kicked")));
+                            if (memberToKick.isOnline()) {
+                                ((Player) memberToKick).sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kickedmember") + " " + factionNameKick));
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notleader")));
+                    }
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-dontexist")));
+                }
+                break;
+
+
+            // Comando reload
             case "reload":
                 if (player.hasPermission("ragefactions.admin")) {
                     // Ricarica i messaggi
@@ -122,7 +163,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband", "list", "reload")
+            return Arrays.asList("create", "join", "disband", "list", "kick", "reload")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
                     .collect(Collectors.toList());

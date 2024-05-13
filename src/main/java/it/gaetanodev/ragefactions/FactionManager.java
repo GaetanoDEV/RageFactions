@@ -19,23 +19,20 @@ public class FactionManager {
             leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-alreadyexist")));
             return;
         }
-        for (Faction faction : factions.values()) {
-            if (faction.getLeader() != null && faction.getLeader().getName().equals(leader.getName())) {
-                leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-alreadyleader")));
-                return;
-            }
-        }
-        if (playerFactions.containsKey(leader.getName())) {
+        // Verifica se il leader è già in una fazione
+        if (playerFactions.containsKey(leader.getUniqueId().toString())) {
             leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-alreadyin")));
             return;
         }
         Faction newFaction = new Faction(name, leader);
         newFaction.setLeader(leader);
         factions.put(name, newFaction);
-        playerFactions.put(leader.getName(), name);
+        playerFactions.put(leader.getUniqueId().toString(), name);
         Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("the-faction") + " " + name + " " + RageFactions.messages.getMessage("faction-broadcast") + " " + leader.getName()));
         leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction") + " " + name + " " + RageFactions.messages.getMessage("faction-created")));
         RageFactions.instance.saveFaction(newFaction);
+        RageFactions.instance.reloadFactions();
+
     }
 
     public void joinFaction(Player player, String factionName) {
@@ -53,6 +50,8 @@ public class FactionManager {
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-joined") + " " + factionName));
         // Salva la fazione nel factions.yml
         RageFactions.instance.saveFaction(faction);
+        RageFactions.instance.reloadFactions();
+
     }
 
     // ALTRI METODI

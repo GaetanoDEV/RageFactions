@@ -122,17 +122,18 @@ public final class RageFactions extends JavaPlugin {
                     for (OfflinePlayer member : members) {
                         if (member.hasPlayedBefore()) {
                             faction.addMember(member);
+                            // Aggiungi il membro alla mappa playerFactions
+                            factionManager.playerFactions.put(member.getUniqueId().toString(), factionName);
                         }
                     }
                     factionManager.factions.put(factionName, faction);
-                    factionManager.playerFactions.put(leaderUUID.toString(), factionName);
-                    factionManager.playerFactions.put(leader.getName(), factionName);
                 } else {
                     getLogger().info("Leader non valido");
                 }
             }
         }
     }
+
 
     @Override
     public void onDisable() {

@@ -15,6 +15,10 @@ faction-disbanded: "&bFazione eliminato con successo"
 faction-notleader: "&cNon sei il capo di questa fazione."
 faction-none: "&cNon ci sono Fazioni salvate."
 faction-list: "&bLista Fazioni:"
+faction-kicknospecific: "&cDevi specificare un membro da espellere."
+faction-kicked: "&aIl membro è stato espulso con successo dalla fazione."
+faction-notmember: "&cQuesto giocatore non è un membro della tua fazione."
+faction-kickedmember: "&cSei stato espulso dalla fazione"
 
 
 # ADMIN
