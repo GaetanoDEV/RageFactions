@@ -7,12 +7,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class FactionCommands implements CommandExecutor {
+public class FactionCommands implements CommandExecutor, TabCompleter {
     public Map<String, Faction> factions = new HashMap<>();
     private FactionManager factionManager;
 
@@ -80,5 +84,17 @@ public class FactionCommands implements CommandExecutor {
             // ALTRI COMANDI
         }
         return true;
+    }
+
+    // TAB-COMPLETER
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (args.length == 1) {
+            return Arrays.asList("create", "join", "disband")
+                    .stream()
+                    .filter(s -> s.startsWith(args[0]))
+                    .collect(Collectors.toList());
+        }
+        return null;
     }
 }

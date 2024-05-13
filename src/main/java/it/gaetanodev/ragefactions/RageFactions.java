@@ -35,6 +35,8 @@ public final class RageFactions extends JavaPlugin {
         // REGISTRA I COMANDI
         factionManager = new FactionManager();
         this.getCommand("f").setExecutor(new FactionCommands(factionManager));
+        this.getCommand("f").setTabCompleter(new FactionCommands(factionManager));
+
 
 
         // Definisci instance in Main
