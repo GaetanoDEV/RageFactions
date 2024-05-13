@@ -32,7 +32,7 @@ public class FactionManager {
         newFaction.setLeader(leader);
         factions.put(name, newFaction);
         playerFactions.put(leader.getName(), name);
-        leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-created")));
+        leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction") + " " + name + " " + RageFactions.messages.getMessage("faction-created")));
         RageFactions.instance.saveFaction(newFaction);
     }
 
@@ -48,7 +48,7 @@ public class FactionManager {
         }
         faction.addMember(player);
         playerFactions.put(player.getName(), factionName);
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-joined")));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-joined" + " " + factionName)));
     }
     // ALTRI METODI
 

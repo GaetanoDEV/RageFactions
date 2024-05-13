@@ -8,6 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -81,8 +82,20 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 }
                 break;
 
-            // ALTRI COMANDI
-        }
+            // Comando list
+            case "list":
+                ConfigurationSection factionsSection = RageFactions.instance.factionsConfig.getConfigurationSection("Factions");
+                if (factionsSection == null || factionsSection.getKeys(false).isEmpty()) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-none")));
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-list")));
+                    for (String factionNameList : factionsSection.getKeys(false)) {
+                        player.sendMessage(ChatColor.AQUA + "- " + factionNameList);
+                    }
+                }
+                break;
+                // ALTRI COMANDI
+}
         return true;
     }
 
@@ -90,7 +103,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband")
+            return Arrays.asList("create", "join", "disband", "list")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
                     .collect(Collectors.toList());
