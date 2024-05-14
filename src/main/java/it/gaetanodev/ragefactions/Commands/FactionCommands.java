@@ -5,6 +5,7 @@ import it.gaetanodev.ragefactions.FactionManager;
 import it.gaetanodev.ragefactions.RageFactions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -179,6 +180,49 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 }
                 break;
 
+            // Comando sethome
+            case "sethome":
+                String factionNameHome = factionManager.playerFactions.get(player.getUniqueId().toString());
+                if (factionNameHome != null) {
+                    Faction faction = factionManager.factions.get(factionNameHome);
+                    if (faction != null && faction.getLeader().equals(player)) {
+                        // Ottieni la posizione attuale del giocatore
+                        Location homeLocation = player.getLocation();
+                        // Salva la posizione nel file factions.yml
+                        RageFactions.instance.factionsConfig.set("Factions." + factionNameHome + ".Home.World", homeLocation.getWorld().getName());
+                        RageFactions.instance.factionsConfig.set("Factions." + factionNameHome + ".Home.X", homeLocation.getX());
+                        RageFactions.instance.factionsConfig.set("Factions." + factionNameHome + ".Home.Y", homeLocation.getY());
+                        RageFactions.instance.factionsConfig.set("Factions." + factionNameHome + ".Home.Z", homeLocation.getZ());
+                        RageFactions.instance.saveFactions();
+                        RageFactions.instance.reloadFactions();
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-home-set")));
+                    } else {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notleader")));
+                    }
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-dontexist")));
+                }
+                break;
+            // Comando home
+            case "home":
+                String factionNameHomeTP = factionManager.playerFactions.get(player.getUniqueId().toString());
+                if (factionNameHomeTP != null) {
+                    Faction faction = factionManager.factions.get(factionNameHomeTP);
+                    if (faction != null) {
+                        Location homeLocation = faction.getHome();
+                        if (homeLocation != null) {
+                            player.teleportAsync(homeLocation);
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-home-teleport")));
+                        } else {
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-home-notset")));
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-dontexist")));
+                    }
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
+                }
+                break;
 
             // ALTRI COMANDI
 }
@@ -189,7 +233,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "reload")
+            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "reload")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
                     .collect(Collectors.toList());

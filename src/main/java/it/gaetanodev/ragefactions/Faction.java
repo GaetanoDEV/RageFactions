@@ -1,5 +1,6 @@
 package it.gaetanodev.ragefactions;
 
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -11,6 +12,7 @@ public class Faction {
     private String name;
     private OfflinePlayer leader;
     private Set<OfflinePlayer> members;
+    private Location home;
 
     public Faction(String name, OfflinePlayer leader) {
         this.name = name;
@@ -56,5 +58,14 @@ public class Faction {
         if (!this.members.contains(leader)) {
             this.members.add(leader);
         }
+
     }
+    public void setHome(Location home) {
+        this.home = home;
+    }
+
+    public Location getHome() {
+        return home;
+    }
+
 }

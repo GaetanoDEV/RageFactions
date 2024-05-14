@@ -1,9 +1,7 @@
 package it.gaetanodev.ragefactions;
 
 import it.gaetanodev.ragefactions.Commands.FactionCommands;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -86,6 +84,14 @@ public final class RageFactions extends JavaPlugin {
                 .stream().map(member -> member.getUniqueId().toString())
                 .collect(Collectors.toList());
         RageFactions.instance.factionsConfig.set(path + "Members", memberUUIDs);
+        // Salva le informazioni sulla home"della fazione
+        Location homeLocation = faction.getHome();
+        if (homeLocation != null) {
+            RageFactions.instance.factionsConfig.set(path + "Home.World", homeLocation.getWorld().getName());
+            RageFactions.instance.factionsConfig.set(path + "Home.X", homeLocation.getX());
+            RageFactions.instance.factionsConfig.set(path + "Home.Y", homeLocation.getY());
+            RageFactions.instance.factionsConfig.set(path + "Home.Z", homeLocation.getZ());
+        }
         try {
             RageFactions.instance.factionsConfig.save(factionsFile);
         } catch (Exception e) {
@@ -93,6 +99,7 @@ public final class RageFactions extends JavaPlugin {
             e.printStackTrace();
         }
     }
+
 
     // Metodo di reload delle fazioni
     public void reloadFactions() {
@@ -126,6 +133,16 @@ public final class RageFactions extends JavaPlugin {
                             factionManager.playerFactions.put(member.getUniqueId().toString(), factionName);
                         }
                     }
+                    // Carica le informazioni sulla "home" della fazione
+                    String worldName = factionsConfig.getString(path + "Home.World");
+                    if (worldName != null) {
+                        double x = factionsConfig.getDouble(path + "Home.X");
+                        double y = factionsConfig.getDouble(path + "Home.Y");
+                        double z = factionsConfig.getDouble(path + "Home.Z");
+                        World world = Bukkit.getWorld(worldName);
+                        Location homeLocation = new Location(world, x, y, z);
+                        faction.setHome(homeLocation);
+                    }
                     factionManager.factions.put(factionName, faction);
                 } else {
                     getLogger().info("Leader non valido");
@@ -133,8 +150,6 @@ public final class RageFactions extends JavaPlugin {
             }
         }
     }
-
-
     @Override
     public void onDisable() {
         saveFactions();

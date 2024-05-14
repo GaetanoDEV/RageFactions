@@ -21,6 +21,10 @@ faction-notmember: "&cNon sei membro di una fazione."
 faction-kickedmember: "&cSei stato espulso dalla fazione"
 faction-leadercannotleave: "&cIl leader non può lasciare la fazione."
 faction-left: "&bHai lasciato la fazione con successo."
+faction-home-set: "&bLa home della fazione è stata impostata con successo."
+faction-home-teleport: "&bTi sei teletrasportato alla home della fazione."
+faction-home-notset: "&cLa home della fazione non è stata ancora impostata."
+
 
 
 # ADMIN
