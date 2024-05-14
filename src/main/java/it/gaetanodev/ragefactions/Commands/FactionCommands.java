@@ -13,6 +13,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -210,8 +212,17 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     if (faction != null) {
                         Location homeLocation = faction.getHome();
                         if (homeLocation != null) {
-                            player.teleportAsync(homeLocation);
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-home-teleport")));
+                            // Ottieni il ritardo dal file di configurazione
+                            int delayInSeconds = RageFactions.instance.getConfig().getInt("homeTeleportDelay");
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-home-teleporting").replace("%s", String.valueOf(delayInSeconds))));
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(RageFactions.instance, new Runnable() {
+                                @Override
+                                public void run() {
+                                    player.teleportAsync(homeLocation);
+                                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-home-teleport")));
+                                }
+                            }, delayInSeconds * 20); // 20 ticks = 1 secondo
+
                         } else {
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-home-notset")));
                         }
@@ -222,6 +233,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
+
             case "chat":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-chat-specific")));

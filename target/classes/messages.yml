@@ -24,6 +24,7 @@ faction-left: "&bHai lasciato la fazione con successo."
 faction-home-set: "&bLa home della fazione è stata impostata con successo."
 faction-home-teleport: "&bTi sei teletrasportato alla home della fazione."
 faction-home-notset: "&cLa home della fazione non è stata ancora impostata."
+faction-home-teleporting: '&bTeletrasporto alla home della fazione in %s secondi...'
 faction-chat-prefix: "&7[&bFaction&fChat&7]"
 faction-chat-specific: "&cDevi specificare un messaggio"
 
