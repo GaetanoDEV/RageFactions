@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class FactionCommands implements CommandExecutor, TabCompleter {
     public Map<String, Faction> factions = new HashMap<>();
-    private FactionManager factionManager;
+    private final FactionManager factionManager;
 
     public FactionCommands(FactionManager factionManager) {
         this.factionManager = factionManager;

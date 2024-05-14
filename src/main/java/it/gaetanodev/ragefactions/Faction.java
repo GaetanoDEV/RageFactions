@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class Faction {
-    private String name;
+    private final String name;
     private OfflinePlayer leader;
     private Set<OfflinePlayer> members;
     private Location home;
@@ -55,9 +55,7 @@ public class Faction {
         if (this.members == null) {
             this.members = new HashSet<>();
         }
-        if (!this.members.contains(leader)) {
-            this.members.add(leader);
-        }
+        this.members.add(leader);
 
     }
     public void setHome(Location home) {
