@@ -14,14 +14,12 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FactionCommands implements CommandExecutor, TabCompleter {
-    public Map<String, Faction> factions = new HashMap<>();
+    public Map<String, Faction> factions = new HashMap<>(); // Mappa per i dati dei Faction
+    public Map<UUID, Boolean> factionChatMode = new HashMap<>(); // Mappa per la chat del Faction
     private final FactionManager factionManager;
 
     public FactionCommands(FactionManager factionManager) {
@@ -123,6 +121,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                             memberUUIDs.remove(memberToKick.getUniqueId().toString());
                             RageFactions.instance.factionsConfig.set("Factions." + factionNameKick + ".Members", memberUUIDs);
                             RageFactions.instance.saveFactions();
+                            RageFactions.instance.reloadFactions();
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kicked")));
                             if (memberToKick.isOnline()) {
                                 ((Player) memberToKick).sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kickedmember") + " " + factionNameKick));
@@ -223,6 +222,31 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
+            case "chat":
+                if (args.length < 2) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-chat-specific")));
+                    return true;
+                }
+                UUID playerId = player.getUniqueId();
+                String factionNameChat = factionManager.playerFactions.get(playerId.toString());
+                if (factionNameChat != null) {
+                    Faction faction = factionManager.factions.get(factionNameChat);
+                    String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+                    String prefix = ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-chat-prefix"));
+                    for (OfflinePlayer member : faction.getMembers()) {
+                        if (member.isOnline()) {
+                            Player onlineMember = member.getPlayer();
+                            if (onlineMember != null) {
+                                onlineMember.sendMessage(prefix + " " + player.getName() + ": " + message);
+                            }
+                        }
+                    }
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
+                }
+                break;
+
+
 
             // ALTRI COMANDI
 }
@@ -233,7 +257,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "reload")
+            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "reload")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
                     .collect(Collectors.toList());

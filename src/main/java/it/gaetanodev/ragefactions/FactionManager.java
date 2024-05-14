@@ -13,6 +13,7 @@ import java.util.UUID;
 public class FactionManager {
     public Map<String, Faction> factions = new HashMap<>();
     public Map<String, String> playerFactions = new HashMap<>();
+    public Map<UUID, Boolean> factionChatMode = new HashMap<>();
 
     public void createFaction(String name, Player leader) {
         if (factions.containsKey(name)) {

@@ -30,10 +30,13 @@ public final class RageFactions extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(" ");
         getServer().getConsoleSender().sendMessage(ChatColor.GRAY + "--------------------------");
 
+        // Crea un'istanza di FactionManager
+        this.factionManager = new FactionManager();
+
         // REGISTRA I COMANDI
-        factionManager = new FactionManager();
         this.getCommand("f").setExecutor(new FactionCommands(factionManager));
         this.getCommand("f").setTabCompleter(new FactionCommands(factionManager));
+
 
         // Definisci instance in Main
         instance = this;
@@ -120,6 +123,7 @@ public final class RageFactions extends JavaPlugin {
                 OfflinePlayer leader = Bukkit.getOfflinePlayer(leaderUUID);
                 if (leader.hasPlayedBefore()) {
                     List<String> memberUUIDStrings = factionsConfig.getStringList(path + "Members");
+                    System.out.println("Member UUIDs: " + memberUUIDStrings);
                     List<OfflinePlayer> members = memberUUIDStrings.stream()
                             .map(UUID::fromString)
                             .map(Bukkit::getOfflinePlayer)
