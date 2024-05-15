@@ -226,7 +226,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                                     player.teleportAsync(homeLocation);
                                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-home-teleport")));
                                 }
-                            }, delayInSeconds * 20); // 20 ticks = 1 secondo
+                            }, delayInSeconds * 20L); // 20 ticks = 1 secondo
 
                         } else {
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-home-notset")));
