@@ -125,7 +125,6 @@ public final class RageFactions extends JavaPlugin {
                 String tag = factionsConfig.getString(path + "Tag");
                 if (leader.hasPlayedBefore()) {
                     List<String> memberUUIDStrings = factionsConfig.getStringList(path + "Members");
-                    System.out.println("Member UUIDs: " + memberUUIDStrings);
                     List<OfflinePlayer> members = memberUUIDStrings.stream()
                             .map(UUID::fromString)
                             .map(Bukkit::getOfflinePlayer)

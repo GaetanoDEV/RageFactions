@@ -2,7 +2,6 @@ package it.gaetanodev.ragefactions;
 
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -69,5 +68,7 @@ public class Faction {
     public String getTag() {
         return tag;
     }
-
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 }

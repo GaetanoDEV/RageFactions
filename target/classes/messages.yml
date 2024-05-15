@@ -1,7 +1,7 @@
 faction: "&bFazione"
 the-faction: "&bLa fazione"
 player-command: "&cQuesto messaggio è eseguibile solo da un giocatore."
-faction-createnospecific: "&cDevi specificare un nome"
+faction-createnospecific: "&cDevi specificare un nome e un TAG"
 faction-create-taglenght: "&cIl TAG deve essere lungo massimo 4 caratteri"
 faction-namespecific: "&cDevispecificare un nome"
 faction-alreadyexist: "&cLa fazione è già esistente"
@@ -28,6 +28,7 @@ faction-home-notset: "&cLa home della fazione non è stata ancora impostata."
 faction-home-teleporting: '&bTeletrasporto alla home della fazione in %s secondi...'
 faction-chat-prefix: "&7[&bFaction&fChat&7]"
 faction-chat-specific: "&cDevi specificare un messaggio"
+faction-tag-changed: "&bIl TAG del Fazione è stato modificato a %s"
 
 
 # ADMIN

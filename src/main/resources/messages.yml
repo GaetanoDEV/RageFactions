@@ -28,6 +28,7 @@ faction-home-notset: "&cLa home della fazione non è stata ancora impostata."
 faction-home-teleporting: '&bTeletrasporto alla home della fazione in %s secondi...'
 faction-chat-prefix: "&7[&bFaction&fChat&7]"
 faction-chat-specific: "&cDevi specificare un messaggio"
+faction-tag-changed: "&bIl TAG del Fazione è stato modificato a %s"
 
 
 # ADMIN
