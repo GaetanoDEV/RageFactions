@@ -29,11 +29,18 @@ public class FactionManager {
         newFaction.setLeader(leader);
         factions.put(name, newFaction);
         playerFactions.put(leader.getUniqueId().toString(), name);
-        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("the-faction") + " " + name + " " + RageFactions.messages.getMessage("faction-broadcast") + " " + leader.getName()));
+
+        // Invia il messaggio di broadcast a tutti i giocatori online tranne il leader
+        String broadcastMessage = ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("the-faction") + " " + name + " " + RageFactions.messages.getMessage("faction-broadcast") + " " + leader.getName());
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (!onlinePlayer.getUniqueId().equals(leader.getUniqueId())) {
+                onlinePlayer.sendMessage(broadcastMessage);
+            }
+        }
+
         leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction") + " " + name + " " + RageFactions.messages.getMessage("faction-created")));
         RageFactions.instance.saveFaction(newFaction);
         RageFactions.instance.reloadFactions();
-
     }
 
     public void joinFaction(Player player, String factionName) {

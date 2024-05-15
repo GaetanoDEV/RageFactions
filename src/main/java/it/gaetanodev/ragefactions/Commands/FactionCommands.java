@@ -258,8 +258,6 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 }
                 break;
 
-
-
             // ALTRI COMANDI
 }
         return true;
