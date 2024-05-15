@@ -13,12 +13,13 @@ public class Faction {
     private OfflinePlayer leader;
     private Set<OfflinePlayer> members;
     private Location home;
-
-    public Faction(String name, OfflinePlayer leader) {
+    private String tag;
+    public Faction(String name, String tag, OfflinePlayer leader) {
         this.name = name;
         this.leader = leader;
         this.members = new HashSet<>();
         this.members.add(leader);
+        this.tag = tag;
     }
 
     public Faction(String name) {
@@ -64,6 +65,9 @@ public class Faction {
 
     public Location getHome() {
         return home;
+    }
+    public String getTag() {
+        return tag;
     }
 
 }

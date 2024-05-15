@@ -15,7 +15,7 @@ public class FactionManager {
     public Map<String, String> playerFactions = new HashMap<>();
     public Map<UUID, Boolean> factionChatMode = new HashMap<>();
 
-    public void createFaction(String name, Player leader) {
+    public void createFaction(String name, String tag, Player leader) {
         if (factions.containsKey(name)) {
             leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-alreadyexist")));
             return;
@@ -25,7 +25,7 @@ public class FactionManager {
             leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-alreadyin")));
             return;
         }
-        Faction newFaction = new Faction(name, leader);
+        Faction newFaction = new Faction(name, tag, leader);
         newFaction.setLeader(leader);
         factions.put(name, newFaction);
         playerFactions.put(leader.getUniqueId().toString(), name);

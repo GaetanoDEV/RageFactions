@@ -83,6 +83,7 @@ public final class RageFactions extends JavaPlugin {
         RageFactions.instance.factionsConfig.set(path + "Name", faction.getName());
         RageFactions.instance.factionsConfig.set(path + "LeaderUUID", faction.getLeaderUUID().toString());
         RageFactions.instance.factionsConfig.set(path + "LeaderName", faction.getLeader().getName());
+        RageFactions.instance.factionsConfig.set(path + "Tag", faction.getTag());
         List<String> memberUUIDs = faction.getMembers()
                 .stream().map(member -> member.getUniqueId().toString())
                 .collect(Collectors.toList());
@@ -121,6 +122,7 @@ public final class RageFactions extends JavaPlugin {
                 UUID leaderUUID = UUID.fromString(factionsConfig.getString(path + "LeaderUUID"));
                 String leaderName = factionsConfig.getString(path + "LeaderName");
                 OfflinePlayer leader = Bukkit.getOfflinePlayer(leaderUUID);
+                String tag = factionsConfig.getString(path + "Tag");
                 if (leader.hasPlayedBefore()) {
                     List<String> memberUUIDStrings = factionsConfig.getStringList(path + "Members");
                     System.out.println("Member UUIDs: " + memberUUIDStrings);
@@ -128,7 +130,7 @@ public final class RageFactions extends JavaPlugin {
                             .map(UUID::fromString)
                             .map(Bukkit::getOfflinePlayer)
                             .collect(Collectors.toList());
-                    Faction faction = new Faction(factionName);
+                    Faction faction = new Faction(factionName, tag, leader);
                     faction.setLeader(leader);
                     for (OfflinePlayer member : members) {
                         if (member.hasPlayedBefore()) {

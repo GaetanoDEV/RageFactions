@@ -43,14 +43,19 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
             return true;
         }
         switch (args[0].toLowerCase()) {
-            // Comando create
+// Comando create
             case "create":
-                if (args.length < 2) {
+                if (args.length < 3) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-createnospecific")));
                     return true;
                 }
                 String factionName = args[1];
-                factionManager.createFaction(factionName, player);
+                String tag = args[2];
+                if (tag.length() > 4) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-create-taglenght")));
+                    return true;
+                }
+                factionManager.createFaction(factionName, tag, player);
                 RageFactions.instance.saveFactions();
                 break;
 
