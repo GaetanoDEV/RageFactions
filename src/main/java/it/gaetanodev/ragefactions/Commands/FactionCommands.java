@@ -286,6 +286,35 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
+            case "admin":
+                if (args.length < 2) {
+                    player.sendMessage(ChatColor.RED + "Usa /f admin <giocatore>");
+                    return true;
+                }
+                String newLeaderName = args[1];
+                OfflinePlayer newLeader = Bukkit.getOfflinePlayer(newLeaderName);
+                if (newLeader == null || !newLeader.hasPlayedBefore()) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-player-notfound") + " " + newLeaderName));
+                    return true;
+                }
+                String factionNameNewLeader = factionManager.playerFactions.get(player.getUniqueId().toString());
+                if (factionNameNewLeader != null) {
+                    Faction faction = factionManager.factions.get(factionNameNewLeader);
+                    if (faction != null && faction.getLeader().equals(player)) {
+                        if (faction.getMembers().contains(newLeader)) { // Verifica se il nuovo leader è un membro della fazione
+                            faction.setLeader(newLeader); // Imposta il nuovo leader
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-leader-changed").replace("%s", newLeaderName)));
+                            RageFactions.instance.saveFaction(faction); // Salva le modifiche nel file factions.yml
+                        } else {
+                            player.sendMessage(ChatColor.RED + newLeaderName + " " + ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-player-notmember")));
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notleader")));
+                    }
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
+                }
+                break;
 
             // ALTRI COMANDI
 }
@@ -296,7 +325,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "reload")
+            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "reload")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
                     .collect(Collectors.toList());
