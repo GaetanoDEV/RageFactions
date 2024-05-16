@@ -13,12 +13,15 @@ public class Faction {
     private Set<OfflinePlayer> members;
     private Location home;
     private String tag;
+    private boolean isPublic;
+    private Set<UUID> invites;
     public Faction(String name, String tag, OfflinePlayer leader) {
         this.name = name;
         this.leader = leader;
         this.members = new HashSet<>();
         this.members.add(leader);
         this.tag = tag;
+        this.invites = new HashSet<>();
     }
 
     public Faction(String name) {
@@ -71,4 +74,25 @@ public class Faction {
     public void setTag(String tag) {
         this.tag = tag;
     }
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+    public void invitePlayer(OfflinePlayer player) {
+        this.invites.add(player.getUniqueId());
+    }
+
+    public void revokeInvite(OfflinePlayer player) {
+        this.invites.remove(player.getUniqueId());
+    }
+
+    public boolean isInvited(OfflinePlayer player) {
+        boolean isInvited = this.invites.contains(player.getUniqueId());
+        return isInvited;
+    }
 }
+
+

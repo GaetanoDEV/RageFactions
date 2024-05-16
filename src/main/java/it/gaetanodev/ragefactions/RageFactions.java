@@ -84,6 +84,7 @@ public final class RageFactions extends JavaPlugin {
         RageFactions.instance.factionsConfig.set(path + "LeaderUUID", faction.getLeaderUUID().toString());
         RageFactions.instance.factionsConfig.set(path + "LeaderName", faction.getLeader().getName());
         RageFactions.instance.factionsConfig.set(path + "Tag", faction.getTag());
+        RageFactions.instance.factionsConfig.set(path + "isPublic", faction.isPublic());
         List<String> memberUUIDs = faction.getMembers()
                 .stream().map(member -> member.getUniqueId().toString())
                 .collect(Collectors.toList());

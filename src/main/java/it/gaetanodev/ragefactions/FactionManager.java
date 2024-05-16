@@ -52,14 +52,19 @@ public class FactionManager {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-alreadyin")));
             return;
         }
-        faction.addMember(player);
-        playerFactions.put(player.getName(), factionName);
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-joined") + " " + factionName));
-        // Salva la fazione nel factions.yml
-        RageFactions.instance.saveFaction(faction);
-        RageFactions.instance.reloadFactions();
-
+        // Verifica se la fazione è pubblica o se il giocatore è stato invitato
+        if (faction.isPublic() || faction.isInvited(player)) {
+            faction.addMember(player);
+            playerFactions.put(player.getName(), factionName);
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-joined") + " " + factionName));
+            // Salva la fazione nel factions.yml
+            RageFactions.instance.saveFaction(faction);
+            RageFactions.instance.reloadFactions();
+        } else {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-isclosed")));
+        }
     }
+
 
     // ALTRI METODI
 
