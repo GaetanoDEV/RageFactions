@@ -1,3 +1,11 @@
+////////////////////////////////
+//                            //
+//   CLASSE GESTORE FAZIONI   //
+//         METODI ETC         //
+//                            //
+////////////////////////////////
+
+
 package it.gaetanodev.ragefactions.Commands;
 
 import it.gaetanodev.ragefactions.Faction;
@@ -13,22 +21,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class FactionCommands implements CommandExecutor, TabCompleter {
-    public Map<String, Faction> factions = new HashMap<>(); // Mappa per i dati dei Faction
-    public Map<UUID, Boolean> factionChatMode = new HashMap<>(); // Mappa per la chat del Faction
     private final FactionManager factionManager;
 
     public FactionCommands(FactionManager factionManager) {
         this.factionManager = factionManager;
 
     }
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
@@ -43,47 +47,63 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
             return true;
         }
         switch (args[0].toLowerCase()) {
-// Comando create
+        // Comando create
             case "create":
                 if (args.length < 3) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-createnospecific")));
                     return true;
                 }
+
                 String factionName = args[1];
                 String tag = args[2];
+
                 if (tag.length() > 4) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-create-taglenght")));
                     return true;
                 }
+
+                // Richiama il metodo per creare una nuova fazione
                 factionManager.createFaction(factionName, tag, player);
+
+                // Salva le modifiche nel file delle fazioni
                 RageFactions.instance.saveFactions();
                 break;
-
             // Comando join
             case "join":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-namespecific")));
                     return true;
                 }
+
                 String factionNameJoin = args[1];
+
+                // Richiama il metodo per unirsi a una fazione
                 factionManager.joinFaction(player, factionNameJoin);
+
+                // Salva le modifiche nel file delle fazioni
                 RageFactions.instance.saveFactions();
                 break;
-
-// Comando disband
+                // Comando disband
             case "disband":
                 String factionNameDisband = factionManager.playerFactions.get(player.getUniqueId().toString());
+
                 if (factionNameDisband != null) {
                     Faction faction = factionManager.factions.get(factionNameDisband);
+
                     if (faction != null && faction.getLeader().equals(player)) {
+                        // Rimuovi la fazione e tutti i membri associati
                         factionManager.factions.remove(factionNameDisband);
+
                         // Rimuovi tutti i membri della fazione dalla mappa
                         for (OfflinePlayer member : faction.getMembers()) {
                             factionManager.playerFactions.remove(member.getUniqueId().toString());
                         }
+
                         // Rimuovi la fazione dal factions.yml
                         RageFactions.instance.factionsConfig.set("Factions." + factionNameDisband, null);
                         RageFactions.instance.saveFaction(faction);
+
+                        // Comunica lo scioglimento della fazione a tutti i giocatori
                         Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("the-faction") + " " + factionNameDisband + " " + RageFactions.messages.getMessage("faction-broadcast-disband") + " " + faction.getLeaderName()));
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-disbanded")));
                     } else {
@@ -93,43 +113,50 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-dontexist")));
                 }
                 break;
-
             // Comando list
             case "list":
                 ConfigurationSection factionsSection = RageFactions.instance.factionsConfig.getConfigurationSection("Factions");
+
                 if (factionsSection == null || factionsSection.getKeys(false).isEmpty()) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-none")));
                 } else {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-list")));
+
+                    // Stampare il nome di ogni fazione
                     for (String factionNameList : factionsSection.getKeys(false)) {
                         player.sendMessage(ChatColor.AQUA + "- " + factionNameList);
                     }
                 }
                 break;
-
-// Comando kick
+                // Comando kick
             case "kick":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kicknospecific")));
                     return true;
                 }
+
                 String factionNameKick = factionManager.playerFactions.get(player.getUniqueId().toString());
+
                 if (factionNameKick != null) {
                     Faction faction = factionManager.factions.get(factionNameKick);
+
                     if (faction != null && faction.getLeader().equals(player)) {
                         String memberName = args[1];
                         OfflinePlayer memberToKick = Bukkit.getOfflinePlayer(memberName);
-                        // Verifica se il giocatore è un membro di una fazione
+
+                        // Verifica se il giocatore è un membro della fazione
                         List<String> memberUUIDs = RageFactions.instance.factionsConfig.getStringList("Factions." + factionNameKick + ".Members");
+
                         if (memberUUIDs.contains(memberToKick.getUniqueId().toString())) {
+                            // Rimuovi il membro dalla fazione e aggiorna il file factions.yml
                             faction.getMembers().remove(memberToKick);
                             factionManager.playerFactions.remove(memberToKick.getUniqueId().toString());
-                            // Rimuovi l'UUID del giocatore dal factions.yml
                             memberUUIDs.remove(memberToKick.getUniqueId().toString());
                             RageFactions.instance.factionsConfig.set("Factions." + factionNameKick + ".Members", memberUUIDs);
                             RageFactions.instance.saveFaction(faction);
                             RageFactions.instance.reloadFactions();
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kicked")));
+
                             if (memberToKick.isOnline()) {
                                 ((Player) memberToKick).sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kickedmember") + " " + factionNameKick));
                             }
@@ -143,8 +170,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-dontexist")));
                 }
                 break;
-
-                // Comando reload
+            // Comando reload
             case "reload":
                 if (player.hasPermission("ragefactions.admin")) {
                     // Ricarica i messaggi
@@ -158,19 +184,20 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("no-permission")));
                 }
                 break;
-
             // Comando leave
             case "leave":
                 String factionNameLeave = factionManager.playerFactions.get(player.getUniqueId().toString());
+
                 if (factionNameLeave != null) {
                     Faction faction = factionManager.factions.get(factionNameLeave);
+
                     if (faction != null) {
                         if (faction.getLeader().equals(player)) {
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-leadercannotleave")));
                         } else {
+                            // Rimuovi il giocatore dalla lista dei membri e aggiorna il file factions.yml
                             faction.getMembers().remove(player);
                             factionManager.playerFactions.remove(player.getUniqueId().toString());
-                            // Rimuovi l'UUID del giocatore dal factions.yml
                             List<String> memberUUIDs = RageFactions.instance.factionsConfig.getStringList("Factions." + factionNameLeave + ".Members");
                             memberUUIDs.remove(player.getUniqueId().toString());
                             RageFactions.instance.factionsConfig.set("Factions." + factionNameLeave + ".Members", memberUUIDs);
@@ -185,15 +212,17 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-
             // Comando sethome
             case "sethome":
                 String factionNameHome = factionManager.playerFactions.get(player.getUniqueId().toString());
+
                 if (factionNameHome != null) {
                     Faction faction = factionManager.factions.get(factionNameHome);
+
                     if (faction != null && faction.getLeader().equals(player)) {
                         // Ottieni la posizione attuale del giocatore
                         Location homeLocation = player.getLocation();
+
                         // Salva la posizione nel file factions.yml
                         RageFactions.instance.factionsConfig.set("Factions." + factionNameHome + ".Home.World", homeLocation.getWorld().getName());
                         RageFactions.instance.factionsConfig.set("Factions." + factionNameHome + ".Home.X", homeLocation.getX());
@@ -212,14 +241,19 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
             // Comando home
             case "home":
                 String factionNameHomeTP = factionManager.playerFactions.get(player.getUniqueId().toString());
+
                 if (factionNameHomeTP != null) {
                     Faction faction = factionManager.factions.get(factionNameHomeTP);
+
                     if (faction != null) {
                         Location homeLocation = faction.getHome();
+
                         if (homeLocation != null) {
                             // Ottieni il ritardo dal file di configurazione
                             int delayInSeconds = RageFactions.instance.getConfig().getInt("homeTeleportDelay");
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-home-teleporting").replace("%s", String.valueOf(delayInSeconds))));
+
+                            // Programmazione del teletrasporto differito
                             Bukkit.getScheduler().scheduleSyncDelayedTask(RageFactions.instance, new Runnable() {
                                 @Override
                                 public void run() {
@@ -227,7 +261,6 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-home-teleport")));
                                 }
                             }, delayInSeconds * 20L); // 20 ticks = 1 secondo
-
                         } else {
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-home-notset")));
                         }
@@ -238,18 +271,22 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-                // Comando chat
+            // Comando chat
             case "chat":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-chat-specific")));
                     return true;
                 }
+
                 UUID playerId = player.getUniqueId();
                 String factionNameChat = factionManager.playerFactions.get(playerId.toString());
+
                 if (factionNameChat != null) {
                     Faction faction = factionManager.factions.get(factionNameChat);
                     String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
                     String prefix = ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-chat-prefix"));
+
+                    // Invia il messaggio di chat a tutti i membri online della fazione
                     for (OfflinePlayer member : faction.getMembers()) {
                         if (member.isOnline()) {
                             Player onlineMember = member.getPlayer();
@@ -262,20 +299,27 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-                // Comando tag
+            // Comando tag
             case "tag":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.RED + "Usa /f tag <nuovoTag>");
                     return true;
                 }
                 String newTag = args[1];
+
+                // Verifica la lunghezza del nuovo tag
                 if (newTag.length() > 4) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-create-taglenght")));
                     return true;
                 }
+
+                // Ottieni il nome della fazione del giocatore che sta cambiando il tag
                 String factionNameTAG = factionManager.playerFactions.get(player.getUniqueId().toString());
+
                 if (factionNameTAG != null) {
                     Faction faction = factionManager.factions.get(factionNameTAG);
+
+                    // Verifica se il giocatore che sta cambiando il tag è il leader della fazione
                     if (faction != null && faction.getLeader().equals(player)) {
                         faction.setTag(newTag);
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-tag-changed").replace("%s", newTag)));
@@ -287,21 +331,30 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-                // Comando admin
+            // Comando admin
             case "admin":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.RED + "Usa /f admin <giocatore>");
                     return true;
                 }
                 String newLeaderName = args[1];
+
+                // Ottieni l'oggetto OfflinePlayer per il nuovo leader
                 OfflinePlayer newLeader = Bukkit.getOfflinePlayer(newLeaderName);
+
+                // Verifica se il nuovo leader esiste e ha giocato in precedenza
                 if (newLeader == null || !newLeader.hasPlayedBefore()) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-player-notfound") + " " + newLeaderName));
                     return true;
                 }
+
+                // Ottieni il nome della fazione del giocatore che sta assegnando il nuovo leader
                 String factionNameNewLeader = factionManager.playerFactions.get(player.getUniqueId().toString());
+
                 if (factionNameNewLeader != null) {
                     Faction faction = factionManager.factions.get(factionNameNewLeader);
+
+                    // Verifica se il giocatore che sta assegnando il nuovo leader è il leader della fazione
                     if (faction != null && faction.getLeader().equals(player)) {
                         if (faction.getMembers().contains(newLeader)) { // Verifica se il nuovo leader è un membro della fazione
                             faction.setLeader(newLeader); // Imposta il nuovo leader
@@ -317,11 +370,14 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-                // Comando open
+            // Comando open
             case "open":
                 String factionNameOpen = factionManager.playerFactions.get(player.getUniqueId().toString());
+
                 if (factionNameOpen != null) {
                     Faction faction = factionManager.factions.get(factionNameOpen);
+
+                    // Verifica se il giocatore che sta eseguendo l'azione è il leader della fazione
                     if (faction != null && faction.getLeader().equals(player)) {
                         faction.setPublic(!faction.isPublic()); // Alterna il valore di isPublic
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-open-status-changed").replace("%s", faction.isPublic() ? ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-open")) : ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-closed")))));
@@ -333,24 +389,34 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-                // Comando invite
+            // Comando invite
             case "invite":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.RED + "Usa /f invite <giocatore>");
                     return true;
                 }
                 String inviteeName = args[1];
+
+                // Ottieni l'oggetto OfflinePlayer per il giocatore da invitare
                 OfflinePlayer invitee = Bukkit.getOfflinePlayer(inviteeName);
+
+                // Verifica se il giocatore da invitare esiste e ha giocato in precedenza
                 if (invitee == null || !invitee.hasPlayedBefore()) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-player-notfound") + " " + inviteeName));
                     return true;
                 }
+
+                // Ottieni il nome della fazione del giocatore che sta invitando
                 String factionNameInvite = factionManager.playerFactions.get(player.getUniqueId().toString());
+
                 if (factionNameInvite != null) {
                     Faction faction = factionManager.factions.get(factionNameInvite);
+
+                    // Verifica se il giocatore che sta invitando è il leader della fazione
                     if (faction != null && faction.getLeader().equals(player)) {
                         faction.invitePlayer(invitee); // Invita il giocatore
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-player-invited").replace("%s", inviteeName)));
+
                         if (invitee.isOnline()) { // Verifica se il giocatore invitato è online
                             Player inviteePlayer = invitee.getPlayer();
                             inviteePlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-invited").replace("%s", faction.getName())));
@@ -363,22 +429,32 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
+                // Comando uninvite
             case "uninvite":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.RED + "Usa /f uninvite <giocatore>");
                     return true;
                 }
                 String uninviteeName = args[1];
+
+                // Ottieni l'oggetto OfflinePlayer per il giocatore da revocare
                 OfflinePlayer uninvitee = Bukkit.getOfflinePlayer(uninviteeName);
+
+                // Verifica se il giocatore da revocare esiste e ha giocato in precedenza
                 if (uninvitee == null || !uninvitee.hasPlayedBefore()) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-player-notfound") + " " + uninviteeName));
                     return true;
                 }
+
+                // Ottieni il nome della fazione del giocatore che sta revocando l'invito
                 String factionNameUninvite = factionManager.playerFactions.get(player.getUniqueId().toString());
+
                 if (factionNameUninvite != null) {
                     Faction faction = factionManager.factions.get(factionNameUninvite);
+
+                    // Verifica se il giocatore che sta revocando l'invito è il leader della fazione
                     if (faction != null && faction.getLeader().equals(player)) {
-                        faction.revokeInvite(uninvitee); // Rimuovi l'invito al giocatore
+                        faction.revokeInvite(uninvitee); // Rimuovi l'invito per il giocatore
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-player-uninvited").replace("%s", uninviteeName)));
                     } else {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notleader")));
@@ -388,7 +464,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 }
                 break;
             // ALTRI COMANDI
-}
+        }
         return true;
     }
 

@@ -1,3 +1,9 @@
+################################
+#                              #
+#      MESSAGGI GENERALI       #
+#                              #
+################################
+
 faction: "&bFazione"
 the-faction: "&bLa fazione"
 player-command: "&cQuesto messaggio è eseguibile solo da un giocatore."
@@ -41,7 +47,11 @@ faction-isclosed: "&cNon puoi unirti a questa fazione perchè è chiusa e non po
 faction-open: "&aaperto"
 faction-closed: "&cchiuso"
 
+################################
+#                              #
+#        MESSAGGI ADMIN        #
+#                              #
+################################
 
-# ADMIN
 faction-reloaded: "&bRageFaction ricaricato correttamente"
 no-permission: "&cNon hai il permesso."

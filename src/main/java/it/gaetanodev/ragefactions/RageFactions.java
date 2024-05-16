@@ -1,3 +1,10 @@
+////////////////////////////////
+//                            //
+//     CLASSE PRINCIPALE      //
+//       RAGEWAR PLUGIN       //
+//                            //
+////////////////////////////////
+
 package it.gaetanodev.ragefactions;
 
 import it.gaetanodev.ragefactions.Commands.FactionCommands;
@@ -19,6 +26,12 @@ public final class RageFactions extends JavaPlugin {
     private File factionsFile;
     private FactionManager factionManager;
 
+////////////////////////////////
+//                            //
+//         METODO DI          //
+//         OnEnable()         //
+//                            //
+////////////////////////////////
 
     @Override
     public void onEnable() {
@@ -29,29 +42,37 @@ public final class RageFactions extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "Abilitato correttamente." + ChatColor.GRAY + " - @Gaethanos__");
         getServer().getConsoleSender().sendMessage(" ");
         getServer().getConsoleSender().sendMessage(ChatColor.GRAY + "--------------------------");
+        getServer().getConsoleSender().sendMessage("");
 
         // Crea un'istanza di FactionManager
         this.factionManager = new FactionManager();
 
-        // REGISTRA I COMANDI
+        // REGISTRA I COMANDI & TAB COMPLETER
         this.getCommand("f").setExecutor(new FactionCommands(factionManager));
         this.getCommand("f").setTabCompleter(new FactionCommands(factionManager));
 
 
-        // Definisci instance in Main
+        // Definisci instance per onEnable()
         instance = this;
         // Carica i messaggi
         messages = new Messages(this);
-        // Carica la configurazione
+        // Salva la configurazione se non esiste
         saveDefaultConfig();
-        // Carica i Factions
+        // Crea il file factions.yml se non esiste
         createFactionsFile();
         // Carica le fazioni
         loadFactions();
 
     }
 
-    // METODO FACTIONS CONFIG
+////////////////////////////////
+//                            //
+//     METODI DI GESTIONE     //
+//  E CREAZIONE DELLE CONFIG  //
+//       DELLE FAZIONI        //
+//                            //
+////////////////////////////////
+
     private void createFactionsFile() {
         this.factionsConfig = factionsConfig;
         factionsFile = new File(getDataFolder(), "factions.yml");

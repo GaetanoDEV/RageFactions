@@ -1,3 +1,9 @@
+////////////////////////////////
+//                            //
+//  CLASSE GESTORE MESSAGGI   //
+//                            //
+////////////////////////////////
+
 package it.gaetanodev.ragefactions;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,7 +22,7 @@ public class Messages {
         createMessagesFile();
     }
 
-    // Crea file messages.yml
+    // Crea il file messages.yml se non esiste
     private void createMessagesFile() {
         messageFile = new File(plugin.getDataFolder(), "messages.yml");
         if (!messageFile.exists()) {
@@ -25,11 +31,12 @@ public class Messages {
         messagesConfig = YamlConfiguration.loadConfiguration(messageFile);
     }
 
-    // Metodo getMessage
+    // Metodo per ottenere un messaggio dal file di configurazione
     public String getMessage(String path) {
         return messagesConfig.getString(path);
     }
 
+    // Ricarica i messaggi dal file di configurazione
     public void reloadMessages() {
         messagesConfig = YamlConfiguration.loadConfiguration(messageFile);
     }
