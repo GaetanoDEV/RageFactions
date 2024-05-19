@@ -101,7 +101,8 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
 
                         // Rimuovi la fazione dal factions.yml
                         RageFactions.instance.factionsConfig.set("Factions." + factionNameDisband, null);
-                        RageFactions.instance.saveFaction(faction);
+                        RageFactions.instance.saveFactions();
+                        RageFactions.instance.reloadFactions();
 
                         // Comunica lo scioglimento della fazione a tutti i giocatori
                         Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("the-faction") + " " + factionNameDisband + " " + RageFactions.messages.getMessage("faction-broadcast-disband") + " " + faction.getLeaderName()));
@@ -463,6 +464,38 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
+                // Comando rename
+            case "rename":
+                if (args.length < 2) {
+                    player.sendMessage(ChatColor.RED + "Usa /f rename <nuovoNome>");
+                    return true;
+                }
+                String newName = args[1];
+
+                // Ottieni il nome della fazione del giocatore che sta rinominando la fazione
+                String factionNameRename = factionManager.playerFactions.get(player.getUniqueId().toString());
+
+                if (factionNameRename != null) {
+                    Faction faction = factionManager.factions.get(factionNameRename);
+
+                    // Verifica se il giocatore che sta rinominando la fazione è il leader della fazione
+                    if (faction != null && faction.getLeader().equals(player)) {
+                        // Salva il vecchio nome della fazione per l'aggiornamento del file yml
+                        String oldName = faction.getName();
+                        faction.setName(newName);
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-renamed").replace("%s", newName)));
+                        RageFactions.instance.factionsConfig.set("Factions." + oldName, null); // Rimuovi la vecchia fazione
+                        RageFactions.instance.factionsConfig.set("Factions." + newName + ".Name", newName); // Aggiungi la nuova fazione
+                        RageFactions.instance.saveFaction(faction);
+                        RageFactions.instance.reloadFactions();
+                    } else {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notleader")));
+                    }
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
+                }
+                break;
+
             // ALTRI COMANDI
         }
         return true;

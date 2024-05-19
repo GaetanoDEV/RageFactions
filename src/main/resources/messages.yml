@@ -46,6 +46,7 @@ faction-player-uninvited: "&bIl giocatore %s è stato tolto dagli inviti."
 faction-isclosed: "&cNon puoi unirti a questa fazione perchè è chiusa e non possiedi un invito."
 faction-open: "&aaperto"
 faction-closed: "&cchiuso"
+faction-renamed: "&bLa tua fazione è stata rinominata in %s."
 
 ################################
 #                              #
