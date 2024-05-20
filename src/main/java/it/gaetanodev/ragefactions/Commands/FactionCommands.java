@@ -49,7 +49,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
             return true;
         }
         switch (args[0].toLowerCase()) {
-        // Comando create
+            // Comando create
             case "create":
                 if (args.length < 3) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-createnospecific")));
@@ -85,7 +85,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 // Salva le modifiche nel file delle fazioni
                 RageFactions.instance.saveFactions();
                 break;
-                // Comando disband
+            // Comando disband
             case "disband":
                 String factionNameDisband = factionManager.playerFactions.get(player.getUniqueId().toString());
 
@@ -131,7 +131,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     }
                 }
                 break;
-                // Comando kick
+            // Comando kick
             case "kick":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kicknospecific")));
@@ -375,7 +375,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-                // Comando open
+            // Comando open
             case "open":
                 String factionNameOpen = factionManager.playerFactions.get(player.getUniqueId().toString());
 
@@ -434,7 +434,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-                // Comando uninvite
+            // Comando uninvite
             case "uninvite":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.RED + "Usa /f uninvite <giocatore>");
@@ -468,7 +468,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-                // Comando rename
+            // Comando rename
             case "rename":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.RED + "Usa /f rename <nuovoNome>");
@@ -499,7 +499,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-                // Comando promote
+            // Comando promote
             case "promote":
                 if (args.length < 3) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("rank-promote-nospecific")));
@@ -522,8 +522,37 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("rank-notleader")));
                 }
                 break;
+            // Comando ranks
+            case "ranks":
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-ranks")));
+                for (Rank ranklist : Rank.values()) {
+                    player.sendMessage(ChatColor.AQUA + "- " + ranklist.name());
+                }
+                break;
+            // Comando members
+            case "members":
+                // Ottieni il nome della fazione del giocatore
+                String factionNameMembers = factionManager.playerFactions.get(player.getUniqueId().toString());
+
+                if (factionNameMembers != null) {
+                    Faction factionMembers = factionManager.factions.get(factionNameMembers);
+
+                    // Verifica se il giocatore è un membro della fazione
+                    if (factionMembers != null && factionMembers.getMembers().contains(player)) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-members")));
+                        for (OfflinePlayer memberNameList : factionMembers.getMembers()) {
+                            Rank rankList = factionMembers.getRank(memberNameList);
+                            player.sendMessage(ChatColor.AQUA + "- " + memberNameList.getName() + " (" + rankList.name() + ")");
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
+                    }
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
+                }
+                break;
+            // ALTRI COMANDI
         }
-                // ALTRI COMANDI
         return true;
     }
 
@@ -531,7 +560,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "promote", "reload")
+            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "members", "reload")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
                     .collect(Collectors.toList());

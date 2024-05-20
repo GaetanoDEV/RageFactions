@@ -51,6 +51,8 @@ rank-promote-nospecific: "&cDevi specificare un membro e un rank per promuovere.
 rank-promoted: "&bHai promosso con successo il membro al rank specificato."
 rank-notleader: "&cSolo il leader può promuovere i membri."
 rank-invalid: "&cRank non valido."
+faction-ranks: "&bLista Rank disponibili:"
+faction-members: "&bLista Membri della Fazione:"
 
 
 ################################
