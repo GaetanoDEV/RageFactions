@@ -125,13 +125,14 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 } else {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-list")));
 
-                    // Stampare il nome di ogni fazione
+                    // Stampare il nome e il tag di ogni fazione
                     for (String factionNameList : factionsSection.getKeys(false)) {
-                        player.sendMessage(ChatColor.AQUA + "- " + factionNameList);
+                        String factionTag = RageFactions.instance.factionsConfig.getString("Factions." + factionNameList + ".Tag");
+                        player.sendMessage(ChatColor.AQUA + "- " + factionNameList + " (" + factionTag + ")");
                     }
                 }
                 break;
-            // Comando kick
+                // Comando kick
             case "kick":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kicknospecific")));

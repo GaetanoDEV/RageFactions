@@ -53,6 +53,7 @@ rank-notleader: "&cSolo il leader può promuovere i membri."
 rank-invalid: "&cRank non valido."
 faction-ranks: "&bLista Rank disponibili:"
 faction-members: "&bLista Membri della Fazione:"
+faction-newmember: "&b%s si è appena unito alla tua Fazione."
 
 
 ################################

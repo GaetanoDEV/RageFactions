@@ -69,6 +69,12 @@ public class FactionManager {
             // Salva la fazione nel factions.yml
             RageFactions.instance.saveFaction(faction);
             RageFactions.instance.reloadFactions();
+
+            // Invia un messaggio al leader della fazione
+            Player leader = faction.getLeader().getPlayer();
+            if (leader != null && leader.isOnline()) {
+                leader.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-newmember").replace("%s", player.getName())));
+            }
         } else {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-isclosed")));
         }
