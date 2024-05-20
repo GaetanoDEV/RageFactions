@@ -10,10 +10,9 @@ package it.gaetanodev.ragefactions;
 
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import it.gaetanodev.ragefactions.Rank;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class Faction {
     private String name;
@@ -23,6 +22,7 @@ public class Faction {
     private String tag;
     private boolean isPublic;
     private Set<UUID> invites;
+    private Map<UUID, Rank> ranks = new HashMap<>();
     public Faction(String name, String tag, OfflinePlayer leader) {
         // Costruttore che inizializza una nuova Fazione con nome, tag e leader forniti
         this.name = name;
@@ -31,17 +31,13 @@ public class Faction {
         this.members.add(leader);
         this.tag = tag;
         this.invites = new HashSet<>();
+        setRank(leader, Rank.LEADER);
     }
 
-    public Faction(String name) {
-        // Costruttore che inizializza una nuova Fazione con solo il nome fornito
-        this.name = name;
-        this.members = new HashSet<>();
-    }
-
-    // Aggiunge un membro alla fazione
+    // Aggiunge un membro alla fazione e imposta il suo rank a "Membro"
     public void addMember(OfflinePlayer player) {
         members.add(player);
+        setRank(player, Rank.MEMBRO);
     }
 
     public String getName() {
@@ -121,5 +117,14 @@ public class Faction {
     // Controlla se un giocatore è stato invitato alla fazione
     public boolean isInvited(OfflinePlayer player) {
         return this.invites.contains(player.getUniqueId());
+    }
+
+    // Imposta il rank ad un giocatore
+    public void setRank(OfflinePlayer player, Rank rank) {
+        ranks.put(player.getUniqueId(), rank);
+    }
+    // Restituisce il rank di un giocatore
+    public Rank getRank(OfflinePlayer player) {
+        return ranks.get(player.getUniqueId());
     }
 }

@@ -15,6 +15,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public final class RageFactions extends JavaPlugin {
     public FileConfiguration factionsConfig;
     private File factionsFile;
     private FactionManager factionManager;
+    public List<Rank> ranks = new ArrayList<>();
 
 ////////////////////////////////
 //                            //
@@ -63,7 +65,18 @@ public final class RageFactions extends JavaPlugin {
         // Carica le fazioni
         loadFactions();
 
+        // Carica i rank dal config.yml
+        List<String> rankNames = getConfig().getStringList("Ranks");
+        for (String rankName : rankNames) {
+            try {
+                Rank rank = Rank.valueOf(rankName.toUpperCase());
+                ranks.add(rank);
+            } catch (IllegalArgumentException e) {
+                getLogger().severe("Rank non valido: " + rankName);
+            }
+        }
     }
+
 
 ////////////////////////////////
 //                            //
@@ -106,10 +119,10 @@ public final class RageFactions extends JavaPlugin {
         RageFactions.instance.factionsConfig.set(path + "LeaderName", faction.getLeader().getName());
         RageFactions.instance.factionsConfig.set(path + "Tag", faction.getTag());
         RageFactions.instance.factionsConfig.set(path + "isPublic", faction.isPublic());
-        List<String> memberUUIDs = faction.getMembers()
-                .stream().map(member -> member.getUniqueId().toString())
+        List<String> memberRanks = faction.getMembers().stream()
+                .map(member -> member.getUniqueId().toString() + ":" + faction.getRank(member).name())
                 .collect(Collectors.toList());
-        RageFactions.instance.factionsConfig.set(path + "Members", memberUUIDs);
+        RageFactions.instance.factionsConfig.set(path + "Members", memberRanks);
         // Salva le informazioni sulla home"della fazione
         Location homeLocation = faction.getHome();
         if (homeLocation != null) {
@@ -146,19 +159,18 @@ public final class RageFactions extends JavaPlugin {
                 OfflinePlayer leader = Bukkit.getOfflinePlayer(leaderUUID);
                 String tag = factionsConfig.getString(path + "Tag");
                 if (leader.hasPlayedBefore()) {
-                    List<String> memberUUIDStrings = factionsConfig.getStringList(path + "Members");
-                    List<OfflinePlayer> members = memberUUIDStrings.stream()
-                            .map(UUID::fromString)
-                            .map(Bukkit::getOfflinePlayer)
-                            .collect(Collectors.toList());
+                    List<String> memberRankStrings = factionsConfig.getStringList(path + "Members");
                     Faction faction = new Faction(factionName, tag, leader);
                     faction.setLeader(leader);
-                    for (OfflinePlayer member : members) {
-                        if (member.hasPlayedBefore()) {
-                            faction.addMember(member);
-                            // Aggiungi il membro alla mappa playerFactions
-                            factionManager.playerFactions.put(member.getUniqueId().toString(), factionName);
-                        }
+                    for (String memberRankString : memberRankStrings) {
+                        String[] parts = memberRankString.split(":");
+                        UUID memberUUID = UUID.fromString(parts[0]);
+                        Rank rank = Rank.valueOf(parts[1]);
+                        OfflinePlayer member = Bukkit.getOfflinePlayer(memberUUID);
+                        faction.addMember(member);
+                        faction.setRank(member, rank);
+                        // Aggiungi il membro alla mappa playerFactions
+                        factionManager.playerFactions.put(member.getUniqueId().toString(), factionName);
                     }
                     // Carica le informazioni sulla "home" della fazione
                     String worldName = factionsConfig.getString(path + "Home.World");
@@ -177,6 +189,7 @@ public final class RageFactions extends JavaPlugin {
             }
         }
     }
+
     @Override
     public void onDisable() {
         saveFactions();

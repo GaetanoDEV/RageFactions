@@ -6,3 +6,9 @@
 ################################
 
 homeTeleportDelay: 3
+
+Ranks:
+  - Membro
+  - Anziano
+  - Moderatore
+  - Leader

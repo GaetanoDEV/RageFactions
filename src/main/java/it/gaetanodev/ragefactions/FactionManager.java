@@ -73,4 +73,10 @@ public class FactionManager {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-isclosed")));
         }
     }
+    // Restituisce la fazione di un giocatore
+    public Faction getFaction(Player player) {
+        String factionName = playerFactions.get(player.getUniqueId().toString());
+        return factions.get(factionName);
+    }
 }
+

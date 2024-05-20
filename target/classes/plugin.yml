@@ -6,4 +6,7 @@ commands:
   f:
     description: Comandi Fazioni
     usage: /f <arg>
+    aliases:
+      - faction
+      - factions
     

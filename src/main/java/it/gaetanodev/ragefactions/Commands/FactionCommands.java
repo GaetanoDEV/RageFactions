@@ -11,6 +11,7 @@ package it.gaetanodev.ragefactions.Commands;
 import it.gaetanodev.ragefactions.Faction;
 import it.gaetanodev.ragefactions.FactionManager;
 import it.gaetanodev.ragefactions.RageFactions;
+import it.gaetanodev.ragefactions.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -41,6 +42,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
         }
         // Definisci player
         Player player = (Player) sender;
+        OfflinePlayer offlinePlayer = (OfflinePlayer) player;
 
         if (args.length == 0) {
             // TODO: LISTA HELP
@@ -358,7 +360,9 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     // Verifica se il giocatore che sta assegnando il nuovo leader è il leader della fazione
                     if (faction != null && faction.getLeader().equals(player)) {
                         if (faction.getMembers().contains(newLeader)) { // Verifica se il nuovo leader è un membro della fazione
+                            faction.setRank(faction.getLeader(), Rank.MEMBRO); // Imposta il rank del vecchio leader a "Membro"
                             faction.setLeader(newLeader); // Imposta il nuovo leader
+                            faction.setRank(newLeader, Rank.LEADER); // Imposta il rank del nuovo leader a "Leader"
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-leader-changed").replace("%s", newLeaderName)));
                             RageFactions.instance.saveFaction(faction); // Salva le modifiche nel file factions.yml
                         } else {
@@ -371,7 +375,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-            // Comando open
+                // Comando open
             case "open":
                 String factionNameOpen = factionManager.playerFactions.get(player.getUniqueId().toString());
 
@@ -495,9 +499,31 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
+                // Comando promote
+            case "promote":
+                if (args.length < 3) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("rank-promote-nospecific")));
+                    return true;
+                }
 
-            // ALTRI COMANDI
+                String memberName = args[1];
+                String rankName = args[2];
+
+                OfflinePlayer member = Bukkit.getOfflinePlayer(memberName);
+                Rank rank = Rank.valueOf(rankName.toUpperCase());
+
+                Faction faction = factionManager.getFaction(player);
+                if (faction.getLeader().equals(player)) {
+                    faction.setRank(member, rank);
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("rank-promoted")));
+                    RageFactions.instance.saveFactions();
+                    RageFactions.instance.reloadFactions();
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("rank-notleader")));
+                }
+                break;
         }
+                // ALTRI COMANDI
         return true;
     }
 
@@ -505,7 +531,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "reload")
+            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "promote", "reload")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
                     .collect(Collectors.toList());
