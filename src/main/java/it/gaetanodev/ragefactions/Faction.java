@@ -22,7 +22,7 @@ public class Faction {
     private String tag;
     private boolean isPublic;
     private Set<UUID> invites;
-    private Map<UUID, Rank> ranks = new HashMap<>();
+    public Map<UUID, Rank> ranks = new HashMap<>();
     public Faction(String name, String tag, OfflinePlayer leader) {
         // Costruttore che inizializza una nuova Fazione con nome, tag e leader forniti
         this.name = name;

@@ -116,7 +116,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-dontexist")));
                 }
                 break;
-            // Comando list
+             // Comando list
             case "list":
                 ConfigurationSection factionsSection = RageFactions.instance.factionsConfig.getConfigurationSection("Factions");
 
@@ -150,15 +150,20 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
 
                         // Verifica se il giocatore è un membro della fazione
                         List<String> memberUUIDs = RageFactions.instance.factionsConfig.getStringList("Factions." + factionNameKick + ".Members");
+                        String memberUUIDToCheck = memberToKick.getUniqueId().toString() + ":";
+                        boolean isMember = memberUUIDs.stream().anyMatch(uuid -> uuid.startsWith(memberUUIDToCheck));
 
-                        if (memberUUIDs.contains(memberToKick.getUniqueId().toString())) {
-                            // Rimuovi il membro dalla fazione e aggiorna il file factions.yml
-                            faction.getMembers().remove(memberToKick);
-                            factionManager.playerFactions.remove(memberToKick.getUniqueId().toString());
-                            memberUUIDs.remove(memberToKick.getUniqueId().toString());
+                        // Rmuovi il membro dalla fazione e dalla mappa playerFactions
+                        faction.getMembers().remove(memberToKick);
+                        factionManager.playerFactions.remove(memberToKick.getUniqueId().toString());
+
+                        if (isMember) {
+                            // Rimuovi il membro dalla lista memberUUIDs e aggiorna il file factions.yml
+                            memberUUIDs.removeIf(uuid -> uuid.startsWith(memberUUIDToCheck));
                             RageFactions.instance.factionsConfig.set("Factions." + factionNameKick + ".Members", memberUUIDs);
-                            RageFactions.instance.saveFaction(faction);
+                            RageFactions.instance.saveFactions();
                             RageFactions.instance.reloadFactions();
+
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kicked")));
 
                             if (memberToKick.isOnline()) {
@@ -188,7 +193,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("no-permission")));
                 }
                 break;
-            // Comando leave
+                // Comando leave
             case "leave":
                 String factionNameLeave = factionManager.playerFactions.get(player.getUniqueId().toString());
 
@@ -199,11 +204,13 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                         if (faction.getLeader().equals(player)) {
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-leadercannotleave")));
                         } else {
-                            // Rimuovi il giocatore dalla lista dei membri e aggiorna il file factions.yml
+                            // Rimuovi il giocatore dalla lista dei membri, rimuovi il suo rank e aggiorna il file factions.yml
                             faction.getMembers().remove(player);
+                            faction.ranks.remove(player.getUniqueId());
                             factionManager.playerFactions.remove(player.getUniqueId().toString());
                             List<String> memberUUIDs = RageFactions.instance.factionsConfig.getStringList("Factions." + factionNameLeave + ".Members");
-                            memberUUIDs.remove(player.getUniqueId().toString());
+                            String memberUUIDToCheck = player.getUniqueId().toString() + ":";
+                            memberUUIDs.removeIf(uuid -> uuid.startsWith(memberUUIDToCheck));
                             RageFactions.instance.factionsConfig.set("Factions." + factionNameLeave + ".Members", memberUUIDs);
                             RageFactions.instance.saveFactions();
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-left")));
@@ -216,7 +223,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-            // Comando sethome
+                // Comando sethome
             case "sethome":
                 String factionNameHome = factionManager.playerFactions.get(player.getUniqueId().toString());
 
