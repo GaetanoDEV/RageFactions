@@ -23,6 +23,7 @@ public class Faction {
     private boolean isPublic;
     private Set<UUID> invites;
     public Map<UUID, Rank> ranks = new HashMap<>();
+    private Set<String> allies = new HashSet<>();
     public Faction(String name, String tag, OfflinePlayer leader) {
         // Costruttore che inizializza una nuova Fazione con nome, tag e leader forniti
         this.name = name;
@@ -127,4 +128,18 @@ public class Faction {
     public Rank getRank(OfflinePlayer player) {
         return ranks.get(player.getUniqueId());
     }
+
+    // Restituisce i fazioni alleati
+    public Set<String> getAllies() {
+        return allies;
+    }
+    // Aggiunge un alleato alla fazione
+    public void addAlly(String ally) {
+        this.allies.add(ally);
+    }
+    // Rimuove un alleato dalla fazione
+    public void removeAlly(String ally) {
+        this.allies.remove(ally);
+    }
 }
+

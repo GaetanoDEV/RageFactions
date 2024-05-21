@@ -34,6 +34,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
         this.factionManager = factionManager;
 
     }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
@@ -86,6 +87,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 RageFactions.instance.saveFactions();
                 break;
             // Comando disband
+// Comando disband
             case "disband":
                 String factionNameDisband = factionManager.playerFactions.get(player.getUniqueId().toString());
 
@@ -93,6 +95,15 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     Faction faction = factionManager.factions.get(factionNameDisband);
 
                     if (faction != null && faction.getLeader().equals(player)) {
+                        // Sciogli tutte le alleanze
+                        for (String ally : faction.getAllies()) {
+                            Faction allyFaction = factionManager.factions.get(ally);
+                            if (allyFaction != null) {
+                                allyFaction.removeAlly(factionNameDisband);
+                                RageFactions.instance.saveFaction(allyFaction);
+                            }
+                        }
+
                         // Rimuovi la fazione e tutti i membri associati
                         factionManager.factions.remove(factionNameDisband);
 
@@ -116,7 +127,8 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-dontexist")));
                 }
                 break;
-             // Comando list
+
+            // Comando list
             case "list":
                 ConfigurationSection factionsSection = RageFactions.instance.factionsConfig.getConfigurationSection("Factions");
 
@@ -132,7 +144,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     }
                 }
                 break;
-                // Comando kick
+            // Comando kick
             case "kick":
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kicknospecific")));
@@ -193,7 +205,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("no-permission")));
                 }
                 break;
-                // Comando leave
+            // Comando leave
             case "leave":
                 String factionNameLeave = factionManager.playerFactions.get(player.getUniqueId().toString());
 
@@ -223,7 +235,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-                // Comando sethome
+            // Comando sethome
             case "sethome":
                 String factionNameHome = factionManager.playerFactions.get(player.getUniqueId().toString());
 
@@ -559,6 +571,53 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
+            // Comando ally
+            case "ally":
+                if (args.length < 2) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allynospecific")));
+                    return true;
+                }
+
+                String factionNameAlly = factionManager.playerFactions.get(player.getUniqueId().toString());
+
+                if (factionNameAlly != null) {
+                    Faction factionAlly = factionManager.factions.get(factionNameAlly);
+
+                    if (factionAlly != null && factionAlly.getLeader().equals(player)) {
+                        switch (args[1].toLowerCase()) {
+                            case "add":
+                                String allyToAdd = args[2];
+                                factionManager.createAlliance(factionNameAlly, allyToAdd);
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allyadded")));
+                                RageFactions.instance.saveFactions();
+                                RageFactions.instance.reloadFactions();
+                                break;
+                            case "remove":
+                                String allyToRemove = args[2];
+                                factionManager.removeAlliance(factionNameAlly, allyToRemove);
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allyremoved")));
+                                RageFactions.instance.saveFactions();
+                                RageFactions.instance.reloadFactions();
+                                break;
+                            case "list":
+                                Set<String> allies = factionAlly.getAllies();
+                                String alliesList = allies.stream()
+                                        .map(ally -> "- " + ally)
+                                        .collect(Collectors.joining("\n"));
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allylist") + "\n" + alliesList));
+                                break;
+                            default:
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allyinvalid")));
+                                break;
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notleader")));
+                    }
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
+                }
+                break;
+
             // ALTRI COMANDI
         }
         return true;
@@ -568,9 +627,19 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "members", "reload")
+            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "members", "ally", "reload")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
+                    .collect(Collectors.toList());
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("ally")) {
+            return Arrays.asList("add", "remove", "list")
+                    .stream()
+                    .filter(s -> s.startsWith(args[1]))
+                    .collect(Collectors.toList());
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("create")) {
+            return Arrays.asList("<Nome> <TAG>")
+                    .stream()
+                    .filter(s -> s.startsWith(args[1]))
                     .collect(Collectors.toList());
         }
         return null;

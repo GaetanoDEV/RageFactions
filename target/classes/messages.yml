@@ -54,6 +54,17 @@ rank-invalid: "&cRank non valido."
 faction-ranks: "&bLista Rank disponibili:"
 faction-members: "&bLista Membri della Fazione:"
 faction-newmember: "&b%s si è appena unito alla tua Fazione."
+faction-allynospecific: "&cSpecifica il nome della fazione alleata."
+faction-allyadded: "&bHai aggiunto con successo un alleato alla tua fazione."
+faction-allyremoved: "&bHai rimosso con successo un alleato dalla tua fazione."
+faction-allylist: "&bFazioni alleate: "
+faction-allyinvalid: "&cComando di alleanza non valido."
+faction-allyaddedleader: "&bLa tua fazione è stata aggiunta come alleata da %s."
+faction-allyremovedleader: "&bLa tua fazione è stata rimossa come alleata da %s."
+faction-friendlyfire: "&cNon puoi attaccare i membri delle fazioni alleate."
+faction-friendlyfiresame: "&cNon puoi attaccare i membri della tua fazione."
+
+
 
 
 ################################

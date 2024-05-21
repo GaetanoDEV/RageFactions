@@ -8,6 +8,7 @@
 package it.gaetanodev.ragefactions;
 
 import it.gaetanodev.ragefactions.Commands.FactionCommands;
+import it.gaetanodev.ragefactions.Events.FriendlyFire;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -48,6 +49,10 @@ public final class RageFactions extends JavaPlugin {
 
         // Crea un'istanza di FactionManager
         this.factionManager = new FactionManager();
+
+        // Registra il Listerner di FriendlyFire
+        FriendlyFire listener = new FriendlyFire(factionManager);
+        getServer().getPluginManager().registerEvents(listener, this);
 
         // REGISTRA I COMANDI & TAB COMPLETER
         this.getCommand("f").setExecutor(new FactionCommands(factionManager));
@@ -131,6 +136,8 @@ public final class RageFactions extends JavaPlugin {
             RageFactions.instance.factionsConfig.set(path + "Home.Y", homeLocation.getY());
             RageFactions.instance.factionsConfig.set(path + "Home.Z", homeLocation.getZ());
         }
+        // Salva la lista degli alleati
+        RageFactions.instance.factionsConfig.set(path + "Allies", new ArrayList<>(faction.getAllies()));
         try {
             RageFactions.instance.factionsConfig.save(factionsFile);
         } catch (Exception e) {
@@ -138,6 +145,7 @@ public final class RageFactions extends JavaPlugin {
             e.printStackTrace();
         }
     }
+
 
 
     // Metodo di reload delle fazioni
@@ -181,6 +189,11 @@ public final class RageFactions extends JavaPlugin {
                         World world = Bukkit.getWorld(worldName);
                         Location homeLocation = new Location(world, x, y, z);
                         faction.setHome(homeLocation);
+                    }
+                    // Carica le alleanze
+                    List<String> allies = factionsConfig.getStringList(path + "Allies");
+                    if (allies != null) {
+                        faction.getAllies().addAll(allies);
                     }
                     factionManager.factions.put(factionName, faction);
                 } else {
