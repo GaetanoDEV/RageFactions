@@ -25,9 +25,9 @@ public final class RageFactions extends JavaPlugin {
     public static RageFactions instance;
     public static Messages messages;
     public FileConfiguration factionsConfig;
+    public List<Rank> ranks = new ArrayList<>();
     private File factionsFile;
     private FactionManager factionManager;
-    public List<Rank> ranks = new ArrayList<>();
 
 ////////////////////////////////
 //                            //
@@ -37,6 +37,7 @@ public final class RageFactions extends JavaPlugin {
 ////////////////////////////////
 
     @Override
+    @Deprecated
     public void onEnable() {
         // Messaggi di Avvio
         getServer().getConsoleSender().sendMessage(ChatColor.GRAY + "--------------------------");
@@ -145,7 +146,6 @@ public final class RageFactions extends JavaPlugin {
             e.printStackTrace();
         }
     }
-
 
 
     // Metodo di reload delle fazioni

@@ -10,11 +10,11 @@ package it.gaetanodev.ragefactions;
 
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import it.gaetanodev.ragefactions.Rank;
 
 import java.util.*;
 
 public class Faction {
+    public Map<UUID, Rank> ranks = new HashMap<>();
     private String name;
     private OfflinePlayer leader;
     private Set<OfflinePlayer> members;
@@ -22,8 +22,8 @@ public class Faction {
     private String tag;
     private boolean isPublic;
     private Set<UUID> invites;
-    public Map<UUID, Rank> ranks = new HashMap<>();
     private Set<String> allies = new HashSet<>();
+
     public Faction(String name, String tag, OfflinePlayer leader) {
         // Costruttore che inizializza una nuova Fazione con nome, tag e leader forniti
         this.name = name;
@@ -77,14 +77,14 @@ public class Faction {
         this.members.add(leader);
     }
 
-    // Imposta la posizione della base della fazione
-    public void setHome(Location home) {
-        this.home = home;
-    }
-
     // Restituisce la posizione della base della fazione
     public Location getHome() {
         return home;
+    }
+
+    // Imposta la posizione della base della fazione
+    public void setHome(Location home) {
+        this.home = home;
     }
 
     public String getTag() {
@@ -124,6 +124,7 @@ public class Faction {
     public void setRank(OfflinePlayer player, Rank rank) {
         ranks.put(player.getUniqueId(), rank);
     }
+
     // Restituisce il rank di un giocatore
     public Rank getRank(OfflinePlayer player) {
         return ranks.get(player.getUniqueId());
@@ -133,13 +134,14 @@ public class Faction {
     public Set<String> getAllies() {
         return allies;
     }
+
     // Aggiunge un alleato alla fazione
     public void addAlly(String ally) {
         this.allies.add(ally);
     }
+
     // Rimuove un alleato dalla fazione
     public void removeAlly(String ally) {
         this.allies.remove(ally);
     }
 }
-

@@ -9,10 +9,11 @@ package it.gaetanodev.ragefactions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
+@Deprecated
 public class FactionManager {
     public Map<String, Faction> factions = new HashMap<>();
     public Map<String, String> playerFactions = new HashMap<>();
@@ -80,6 +81,7 @@ public class FactionManager {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-isclosed")));
         }
     }
+
     // Metodo per creare un'alleanza tra due fazioni
     public void createAlliance(String factionName1, String factionName2) {
         Faction faction1 = factions.get(factionName1);

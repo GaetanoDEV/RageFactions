@@ -23,8 +23,10 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class FactionCommands implements CommandExecutor, TabCompleter {
@@ -36,6 +38,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     }
 
     @Override
+    @Deprecated
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("player-command")));
@@ -87,7 +90,6 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 RageFactions.instance.saveFactions();
                 break;
             // Comando disband
-// Comando disband
             case "disband":
                 String factionNameDisband = factionManager.playerFactions.get(player.getUniqueId().toString());
 
@@ -617,7 +619,6 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-
             // ALTRI COMANDI
         }
         return true;
