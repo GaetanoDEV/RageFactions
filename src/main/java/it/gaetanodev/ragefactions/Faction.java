@@ -144,4 +144,18 @@ public class Faction {
     public void removeAlly(String ally) {
         this.allies.remove(ally);
     }
+
+    public void promoteMember(OfflinePlayer member) {
+        Rank currentRank = getRank(member);
+        Rank[] ranks = Rank.values();
+        int nextRankIndex = (currentRank.ordinal() + 1) % ranks.length;
+        setRank(member, ranks[nextRankIndex]);
+    }
+
+    public void demoteMember(OfflinePlayer member) {
+        Rank currentRank = getRank(member);
+        Rank[] ranksDemote = Rank.values();
+        int previousRankIndex = (currentRank.ordinal() - 1) % ranksDemote.length;
+        setRank(member, ranksDemote[previousRankIndex]);
+    }
 }

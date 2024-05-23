@@ -12,8 +12,8 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
-@Deprecated
 public class FactionManager {
     public Map<String, Faction> factions = new HashMap<>();
     public Map<String, String> playerFactions = new HashMap<>();
@@ -85,7 +85,13 @@ public class FactionManager {
     // Metodo per creare un'alleanza tra due fazioni
     public void createAlliance(String factionName1, String factionName2) {
         Faction faction1 = factions.get(factionName1);
+        if (faction1 == null) {
+            return;
+        }
         Faction faction2 = factions.get(factionName2);
+        if (faction2 == null) {
+            return;
+        }
         faction1.addAlly(factionName2);
         faction2.addAlly(factionName1);
         RageFactions.instance.saveFaction(faction1);
@@ -101,7 +107,13 @@ public class FactionManager {
     // Metodo per rimuovere un'alleanza tra due fazioni
     public void removeAlliance(String factionName1, String factionName2) {
         Faction faction1 = factions.get(factionName1);
+        if (faction1 == null) {
+            return;
+        }
         Faction faction2 = factions.get(factionName2);
+        if (faction1 == null) {
+            return;
+        }
         faction1.removeAlly(factionName2);
         faction2.removeAlly(factionName1);
         RageFactions.instance.saveFaction(faction1);
@@ -113,7 +125,6 @@ public class FactionManager {
             leader2.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allyremovedleader").replace("%s", factionName1)));
         }
     }
-
 
     // Restituisce la fazione di un giocatore
     public Faction getFaction(Player player) {

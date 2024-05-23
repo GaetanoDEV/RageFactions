@@ -38,7 +38,6 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    @Deprecated
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("player-command")));
@@ -523,23 +522,42 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 break;
             // Comando promote
             case "promote":
-                if (args.length < 3) {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("rank-promote-nospecific")));
+                if (args.length < 2) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("promote-nospecific")));
                     return true;
                 }
 
                 String memberName = args[1];
-                String rankName = args[2];
 
                 OfflinePlayer member = Bukkit.getOfflinePlayer(memberName);
-                Rank rank = Rank.valueOf(rankName.toUpperCase());
 
                 Faction faction = factionManager.getFaction(player);
                 if (faction.getLeader().equals(player)) {
-                    faction.setRank(member, rank);
+                    faction.promoteMember(member);
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("rank-promoted")));
-                    RageFactions.instance.saveFactions();
+                    RageFactions.instance.saveFaction(faction);
                     RageFactions.instance.reloadFactions();
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("rank-notleader")));
+                }
+                break;
+            // Comando demote
+            case "demote":
+                if (args.length < 2) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("promote-nospecific")));
+                    return true;
+                }
+
+                String memberNameDemote = args[1];
+
+                OfflinePlayer memberDemote = Bukkit.getOfflinePlayer(memberNameDemote);
+
+                Faction factionDemote = factionManager.getFaction(player);
+                if (factionDemote.getLeader().equals(player)) {
+                    factionDemote.demoteMember(memberDemote);
+                    RageFactions.instance.saveFaction(factionDemote);
+                    RageFactions.instance.reloadFactions();
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("rank-demoted")));
                 } else {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("rank-notleader")));
                 }
@@ -608,6 +626,15 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                                         .collect(Collectors.joining("\n"));
                                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allylist") + "\n" + alliesList));
                                 break;
+                            case "chat":
+                                String message = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+                                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                                    String onlinePlayerFactionName = factionManager.playerFactions.get(onlinePlayer.getUniqueId().toString());
+                                    if (factionNameAlly.equals(onlinePlayerFactionName) || factionAlly.getAllies().contains(onlinePlayerFactionName)) {
+                                        onlinePlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+                                    }
+                                }
+                                break;
                             default:
                                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allyinvalid")));
                                 break;
@@ -628,12 +655,12 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "members", "ally", "reload")
+            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "demote", "members", "ally", "reload")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
                     .collect(Collectors.toList());
         } else if (args.length == 2 && args[0].equalsIgnoreCase("ally")) {
-            return Arrays.asList("add", "remove", "list")
+            return Arrays.asList("add", "remove", "list", "chat")
                     .stream()
                     .filter(s -> s.startsWith(args[1]))
                     .collect(Collectors.toList());

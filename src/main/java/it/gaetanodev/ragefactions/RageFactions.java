@@ -37,7 +37,6 @@ public final class RageFactions extends JavaPlugin {
 ////////////////////////////////
 
     @Override
-    @Deprecated
     public void onEnable() {
         // Messaggi di Avvio
         getServer().getConsoleSender().sendMessage(ChatColor.GRAY + "--------------------------");
