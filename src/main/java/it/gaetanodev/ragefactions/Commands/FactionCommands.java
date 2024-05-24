@@ -563,6 +563,32 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("rank-notleader")));
                 }
                 break;
+            // Comando setrank
+            case "setrank":
+                if (args.length < 3) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("rank-promote-nospecific")));
+                    return true;
+                }
+                Faction factionRankNotMember = factionManager.getFaction(player);
+                if (factionRankNotMember == null) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
+                    return true;
+                }
+
+                String memberNameRank = args[1];
+                String rankName = args[2];
+
+                OfflinePlayer memberRank = Bukkit.getOfflinePlayer(memberNameRank);
+                Rank rank = Rank.valueOf(rankName.toUpperCase());
+
+                Faction factionRank = factionManager.getFaction(player);
+                if (factionRank.getLeader().equals(player)) {
+                    factionRank.setRank(memberRank, rank);
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("rank-promoted")));
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("rank-notleader")));
+                }
+                break;
             // Comando ranks
             case "ranks":
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-ranks")));
@@ -737,7 +763,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "demote", "members", "ally", "bank", "deposit", "withdraw", "reload")
+            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "demote", "setrank", "members", "ally", "bank", "deposit", "withdraw", "reload")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
                     .collect(Collectors.toList());
