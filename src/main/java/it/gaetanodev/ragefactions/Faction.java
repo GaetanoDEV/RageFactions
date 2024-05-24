@@ -23,6 +23,7 @@ public class Faction {
     private boolean isPublic;
     private Set<UUID> invites;
     private Set<String> allies = new HashSet<>();
+    private double bank;
 
     public Faction(String name, String tag, OfflinePlayer leader) {
         // Costruttore che inizializza una nuova Fazione con nome, tag e leader forniti
@@ -157,5 +158,24 @@ public class Faction {
         Rank[] ranksDemote = Rank.values();
         int previousRankIndex = (currentRank.ordinal() - 1) % ranksDemote.length;
         setRank(member, ranksDemote[previousRankIndex]);
+    }
+    public double getBank() {
+        return bank;
+    }
+
+    public void setBank(double bank) {
+        this.bank = bank;
+    }
+
+    public void deposit(double amount) {
+        this.bank += amount;
+    }
+
+    public boolean withdraw(double amount) {
+        if (amount > this.bank) {
+            return false;
+        }
+        this.bank -= amount;
+        return true;
     }
 }

@@ -65,6 +65,16 @@ faction-allyaddedleader: "&bLa tua fazione è stata aggiunta come alleata da %s.
 faction-allyremovedleader: "&bLa tua fazione è stata rimossa come alleata da %s."
 faction-friendlyfire: "&cNon puoi attaccare i membri delle fazioni alleate."
 faction-friendlyfiresame: "&cNon puoi attaccare i membri della tua fazione."
+faction-depositnospecific: "&cDevi specificare una quantità di denaro da depositare."
+faction-invalidamount: "&cQuantità di denaro non valida."
+faction-depositsuccess: "&bHai depositato %s nella banca della tua fazione."
+faction-depositfail: "&cTransazione fallita."
+faction-bankbalance: "&bIl saldo della banca della tua fazione è"
+faction-withdrawnospecific: "&cDevi specificare una quantità di denaro da prelevare."
+faction-insufficientfunds: "&cNon ci sono abbastanza soldi nella banca della fazione."
+faction-withdrawsuccess: "&bHai prelevato %s dalla banca della tua fazione."
+faction-withdrawfail: "&cTransazione fallita."
+
 
 
 

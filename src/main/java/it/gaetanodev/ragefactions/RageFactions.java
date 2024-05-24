@@ -9,10 +9,12 @@ package it.gaetanodev.ragefactions;
 
 import it.gaetanodev.ragefactions.Commands.FactionCommands;
 import it.gaetanodev.ragefactions.Events.FriendlyFire;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -21,6 +23,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.bukkit.Bukkit.getServer;
+
 public final class RageFactions extends JavaPlugin {
     public static RageFactions instance;
     public static Messages messages;
@@ -28,6 +32,7 @@ public final class RageFactions extends JavaPlugin {
     public List<Rank> ranks = new ArrayList<>();
     private File factionsFile;
     private FactionManager factionManager;
+    private static Economy econ = null;
 
 ////////////////////////////////
 //                            //
@@ -69,6 +74,13 @@ public final class RageFactions extends JavaPlugin {
         createFactionsFile();
         // Carica le fazioni
         loadFactions();
+
+        // Crea un istanza per Vault
+        if (!setupEconomy() ) {
+            getLogger().severe("Disabilitato a causa della mancanza di Vault");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         // Carica i rank dal config.yml
         List<String> rankNames = getConfig().getStringList("Ranks");
@@ -119,11 +131,12 @@ public final class RageFactions extends JavaPlugin {
     // Salva una Faction nel factionFile
     public void saveFaction(Faction faction) {
         String path = "Factions." + faction.getName() + ".";
-        RageFactions.instance.factionsConfig.set(path + "Name", faction.getName());
-        RageFactions.instance.factionsConfig.set(path + "LeaderUUID", faction.getLeaderUUID().toString());
-        RageFactions.instance.factionsConfig.set(path + "LeaderName", faction.getLeader().getName());
-        RageFactions.instance.factionsConfig.set(path + "Tag", faction.getTag());
-        RageFactions.instance.factionsConfig.set(path + "isPublic", faction.isPublic());
+        factionsConfig.set(path + "Name", faction.getName());
+        factionsConfig.set(path + "LeaderUUID", faction.getLeaderUUID().toString());
+        factionsConfig.set(path + "LeaderName", faction.getLeader().getName());
+        factionsConfig.set(path + "Tag", faction.getTag());
+        factionsConfig.set(path + "isPublic", faction.isPublic());
+        factionsConfig.set(path + "Bank", faction.getBank());
         List<String> memberRanks = faction.getMembers().stream()
                 .map(member -> member.getUniqueId().toString() + ":" + faction.getRank(member).name())
                 .collect(Collectors.toList());
@@ -131,15 +144,15 @@ public final class RageFactions extends JavaPlugin {
         // Salva le informazioni sulla home"della fazione
         Location homeLocation = faction.getHome();
         if (homeLocation != null) {
-            RageFactions.instance.factionsConfig.set(path + "Home.World", homeLocation.getWorld().getName());
-            RageFactions.instance.factionsConfig.set(path + "Home.X", homeLocation.getX());
-            RageFactions.instance.factionsConfig.set(path + "Home.Y", homeLocation.getY());
-            RageFactions.instance.factionsConfig.set(path + "Home.Z", homeLocation.getZ());
+            factionsConfig.set(path + "Home.World", homeLocation.getWorld().getName());
+            factionsConfig.set(path + "Home.X", homeLocation.getX());
+            factionsConfig.set(path + "Home.Y", homeLocation.getY());
+            factionsConfig.set(path + "Home.Z", homeLocation.getZ());
         }
         // Salva la lista degli alleati
-        RageFactions.instance.factionsConfig.set(path + "Allies", new ArrayList<>(faction.getAllies()));
+        factionsConfig.set(path + "Allies", new ArrayList<>(faction.getAllies()));
         try {
-            RageFactions.instance.factionsConfig.save(factionsFile);
+            factionsConfig.save(factionsFile);
         } catch (Exception e) {
             getLogger().severe("Impossibile salvare factions.yml");
             e.printStackTrace();
@@ -194,6 +207,9 @@ public final class RageFactions extends JavaPlugin {
                     if (allies != null) {
                         faction.getAllies().addAll(allies);
                     }
+                    // Carica il saldo della banca della fazione
+                    double bank = factionsConfig.getDouble(path + "Bank");
+                    faction.setBank(bank); // Imposta il saldo della banca
                     factionManager.factions.put(factionName, faction);
                 } else {
                     getLogger().info("Leader non valido");
@@ -202,9 +218,36 @@ public final class RageFactions extends JavaPlugin {
         }
     }
 
+////////////////////////////////
+//                            //
+//          GESTIONE          //
+//          ECONOMIA          //
+//                            //
+////////////////////////////////
+
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
+    }
+    public static Economy getEconomy() {
+        return econ;
+    }
+
+    // Metodo di spegnimento del Server
     @Override
     public void onDisable() {
         saveFactions();
         getLogger().info("Tutte le fazioni sono state salvate.");
     }
 }
+
+
+
