@@ -649,6 +649,11 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 break;
                 // Comando deposit
             case "deposit":
+                Faction factionDepositNotMember = factionManager.getFaction(player);
+                if (factionDepositNotMember == null) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
+                    return true;
+                }
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-depositnospecific")));
                     return true;
@@ -677,11 +682,21 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 break;
             // Comando bank
             case "bank":
+                Faction factionBank = factionManager.getFaction(player);
+                if (factionBank == null) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
+                    return true;
+                }
                 Faction factionEconomyBank = factionManager.getFaction(player);
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-bankbalance") + " " + RageFactions.getEconomy().format(factionEconomyBank.getBank())));
                 break;
                 // Comando withdraw
             case "withdraw":
+                Faction factionWithdrawNotMember = factionManager.getFaction(player);
+                if (factionWithdrawNotMember == null) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
+                    return true;
+                }
                 if (args.length < 2) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-withdrawnospecific")));
                     return true;

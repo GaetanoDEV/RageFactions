@@ -156,6 +156,9 @@ public class Faction {
     // Diminuisce il rank di un giocatore
     public void demoteMember(OfflinePlayer member) {
         Rank currentRank = getRank(member);
+        if (currentRank == Rank.MEMBRO) {
+            return;
+        }
         Rank[] ranksDemote = Rank.values();
         int previousRankIndex = (currentRank.ordinal() - 1) % ranksDemote.length;
         setRank(member, ranksDemote[previousRankIndex]);
