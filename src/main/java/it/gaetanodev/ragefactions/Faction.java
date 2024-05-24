@@ -24,6 +24,7 @@ public class Faction {
     private Set<UUID> invites;
     private Set<String> allies = new HashSet<>();
     private double bank;
+    private int power;
 
     public Faction(String name, String tag, OfflinePlayer leader) {
         // Costruttore che inizializza una nuova Fazione con nome, tag e leader forniti
@@ -152,30 +153,49 @@ public class Faction {
         int nextRankIndex = (currentRank.ordinal() + 1) % ranks.length;
         setRank(member, ranks[nextRankIndex]);
     }
-
+    // Diminuisce il rank di un giocatore
     public void demoteMember(OfflinePlayer member) {
         Rank currentRank = getRank(member);
         Rank[] ranksDemote = Rank.values();
         int previousRankIndex = (currentRank.ordinal() - 1) % ranksDemote.length;
         setRank(member, ranksDemote[previousRankIndex]);
     }
+    // Restituisce l'ammontare della banca
     public double getBank() {
         return bank;
     }
-
+    // Imposta il valore della banca
     public void setBank(double bank) {
         this.bank = bank;
     }
-
+    // Aggiunge l'ammontare al valore della banca
     public void deposit(double amount) {
         this.bank += amount;
     }
-
+    // Diminuisce il valore della banca dall'ammontare
     public boolean withdraw(double amount) {
         if (amount > this.bank) {
             return false;
         }
         this.bank -= amount;
         return true;
+    }
+    // Restituisce il power della Fazione
+    public int getPower() {
+        return power;
+    }
+    // Imposta il power della fazione
+    public void setPower(int power) {
+        this.power = power;
+    }
+    // Aumenta il power della fazione di 1
+    public void increasePower() {
+        this.power++;
+    }
+    // Diminuisce il power della Fazione di 1
+    public void decreasePower() {
+        if (this.power > 0) {
+            this.power--;
+        }
     }
 }

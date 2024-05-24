@@ -713,8 +713,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-withdrawfail")));
                 }
                 break;
-
-            // ALTRI COMANDI
+                // ALTRI COMANDI
         }
         return true;
     }

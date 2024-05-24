@@ -74,7 +74,8 @@ faction-withdrawnospecific: "&cDevi specificare una quantità di denaro da prele
 faction-insufficientfunds: "&cNon ci sono abbastanza soldi nella banca della fazione."
 faction-withdrawsuccess: "&bHai prelevato %s dalla banca della tua fazione."
 faction-withdrawfail: "&cTransazione fallita."
-
+faction-killer-power: "&bHai guandagnato 1 Power dall'Uccisione"
+faction-killed-decreasepower: "&cHai perso 1 Power per essere stato Ucciso."
 
 
 

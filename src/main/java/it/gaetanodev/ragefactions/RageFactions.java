@@ -9,6 +9,7 @@ package it.gaetanodev.ragefactions;
 
 import it.gaetanodev.ragefactions.Commands.FactionCommands;
 import it.gaetanodev.ragefactions.Events.FriendlyFire;
+import it.gaetanodev.ragefactions.Events.PowerManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
@@ -58,6 +59,9 @@ public final class RageFactions extends JavaPlugin {
         // Registra il Listerner di FriendlyFire
         FriendlyFire listener = new FriendlyFire(factionManager);
         getServer().getPluginManager().registerEvents(listener, this);
+        // Registra il listener di PowerManager
+        PowerManager listenerPower = new PowerManager(factionManager);
+        getServer().getPluginManager().registerEvents(listenerPower,this);
 
         // REGISTRA I COMANDI & TAB COMPLETER
         this.getCommand("f").setExecutor(new FactionCommands(factionManager));
@@ -137,6 +141,7 @@ public final class RageFactions extends JavaPlugin {
         factionsConfig.set(path + "Tag", faction.getTag());
         factionsConfig.set(path + "isPublic", faction.isPublic());
         factionsConfig.set(path + "Bank", faction.getBank());
+        factionsConfig.set(path + "Power", faction.getPower());
         List<String> memberRanks = faction.getMembers().stream()
                 .map(member -> member.getUniqueId().toString() + ":" + faction.getRank(member).name())
                 .collect(Collectors.toList());
@@ -210,6 +215,9 @@ public final class RageFactions extends JavaPlugin {
                     // Carica il saldo della banca della fazione
                     double bank = factionsConfig.getDouble(path + "Bank");
                     faction.setBank(bank); // Imposta il saldo della banca
+                    // Carica il power del Fazione
+                    int power = factionsConfig.getInt(path + "Power");
+                    faction.setPower(power);
                     factionManager.factions.put(factionName, faction);
                 } else {
                     getLogger().info("Leader non valido");
