@@ -120,8 +120,8 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                         RageFactions.instance.reloadFactions();
 
                         // Comunica lo scioglimento della fazione a tutti i giocatori
-                        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("the-faction") + " " + factionNameDisband + " " + RageFactions.messages.getMessage("faction-broadcast-disband") + " " + faction.getLeaderName()));
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-disbanded")));
+                        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-broadcast-disband").replace("%s", factionNameDisband).replace("%leader%", faction.getLeaderName())));
+
                     } else {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notleader")));
                     }

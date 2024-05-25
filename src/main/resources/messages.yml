@@ -4,21 +4,17 @@
 #                              #
 ################################
 
-faction: "&bFazione"
-the-faction: "&bLa fazione"
 player-command: "&cQuesto messaggio è eseguibile solo da un giocatore."
 faction-createnospecific: "&cDevi specificare un nome e un TAG"
 faction-create-taglenght: "&cIl TAG deve essere lungo massimo 4 caratteri"
 faction-namespecific: "&cDevispecificare un nome"
 faction-alreadyexist: "&cLa fazione è già esistente"
-faction-created: "&bcreata correttamente!"
-faction-broadcast: "&bè stata ora creata da"
-faction-broadcast-disband: "&cè stata ora eliminata da"
+faction-broadcast: "&bha appena creato la fazione"
+faction-broadcast-disband: "&cLa fazione %s è stata eliminata da %leader%"
 faction-dontexist: "&cLa fazione specificata non esiste"
 faction-joined: "&bTi sei unito alla fazione"
 faction-alreadyin: "&bSei già dentro una fazione"
 faction-alreadyleader: "&bSei già capo di un altra Fazione"
-faction-disbanded: "&bFazione eliminato con successo"
 faction-notleader: "&cNon sei il capo di questa fazione."
 faction-none: "&cNon ci sono Fazioni salvate."
 faction-list: "&bLista Fazioni:"
