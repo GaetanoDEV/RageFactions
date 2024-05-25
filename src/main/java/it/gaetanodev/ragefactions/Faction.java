@@ -175,14 +175,6 @@ public class Faction {
     public void deposit(double amount) {
         this.bank += amount;
     }
-    // Diminuisce il valore della banca dall'ammontare
-    public boolean withdraw(double amount) {
-        if (amount > this.bank) {
-            return false;
-        }
-        this.bank -= amount;
-        return true;
-    }
     // Restituisce il power della Fazione
     public int getPower() {
         return power;

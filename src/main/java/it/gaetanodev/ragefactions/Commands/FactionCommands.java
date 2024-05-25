@@ -716,44 +716,6 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 Faction factionEconomyBank = factionManager.getFaction(player);
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-bankbalance") + " " + RageFactions.getEconomy().format(factionEconomyBank.getBank())));
                 break;
-                // Comando withdraw
-            case "withdraw":
-                Faction factionWithdrawNotMember = factionManager.getFaction(player);
-                if (factionWithdrawNotMember == null) {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
-                    return true;
-                }
-                if (args.length < 2) {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-withdrawnospecific")));
-                    return true;
-                }
-
-                double amountWithdraw;
-                try {
-                    amount = Double.parseDouble(args[1]);
-                } catch (NumberFormatException e) {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-invalidamount")));
-                    return true;
-                }
-
-                Faction factionWithdraw = factionManager.getFaction(player);
-                if (factionWithdraw.getBank() < amount) {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-insufficientfunds")));
-                    return true;
-                }
-
-                factionWithdraw.withdraw(amount);
-                EconomyResponse responseWithdraw = RageFactions.getEconomy().depositPlayer(player, amount);
-                if (responseWithdraw.transactionSuccess()) {
-                    String message = RageFactions.messages.getMessage("faction-withdrawsuccess");
-                    RageFactions.instance.saveFaction(factionWithdraw);
-                    RageFactions.instance.reloadFactions();
-                    String formattedMessage = String.format(message, RageFactions.getEconomy().format(amount));
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', formattedMessage));
-                } else {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-withdrawfail")));
-                }
-                break;
                 // ALTRI COMANDI
         }
         return true;
@@ -763,7 +725,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "demote", "setrank", "members", "ally", "bank", "deposit", "withdraw", "reload")
+            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "demote", "setrank", "members", "ally", "bank", "deposit", "reload")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
                     .collect(Collectors.toList());
