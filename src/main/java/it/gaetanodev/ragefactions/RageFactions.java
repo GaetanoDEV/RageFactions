@@ -10,21 +10,19 @@ package it.gaetanodev.ragefactions;
 import it.gaetanodev.ragefactions.Commands.FactionCommands;
 import it.gaetanodev.ragefactions.Events.FriendlyFire;
 import it.gaetanodev.ragefactions.Events.PowerManager;
+import it.gaetanodev.ragefactions.Placeholders.PlaceholdersManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.bukkit.Bukkit.getServer;
 
 public final class RageFactions extends JavaPlugin {
     public static RageFactions instance;
@@ -34,6 +32,9 @@ public final class RageFactions extends JavaPlugin {
     private File factionsFile;
     private FactionManager factionManager;
     private static Economy econ = null;
+    public Map<String, String> playerFactions = new HashMap<>();
+
+
 
 ////////////////////////////////
 //                            //
@@ -79,11 +80,20 @@ public final class RageFactions extends JavaPlugin {
         // Carica le fazioni
         loadFactions();
 
-        // Crea un istanza per Vault
+        // Crea un istanza per Vault e controllane l'installazione
         if (!setupEconomy() ) {
             getLogger().severe("Disabilitato a causa della mancanza di Vault");
             getServer().getPluginManager().disablePlugin(this);
             return;
+        }
+        // Controlla se PAPI è installato
+            if (getServer().getPluginManager().getPlugin("PlaceholderAPI") == null) {
+                getLogger().severe("Disabilitato a causa della mancanza di PlaceholderAPI");
+                getServer().getPluginManager().disablePlugin(this);
+            }
+        // Registra i Placeholders
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { //
+            new PlaceholdersManager(this, factionManager).register();
         }
 
         // Carica i rank dal config.yml

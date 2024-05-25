@@ -1,7 +1,10 @@
 name: RageFactions
-version: '1.0-SNAPSHOT'
+version: '1.0'
 main: it.gaetanodev.ragefactions.RageFactions
 api-version: '1.20'
+depend:
+  - Vault
+  - PlaceholderAPI
 commands:
   f:
     description: Comandi Fazioni
