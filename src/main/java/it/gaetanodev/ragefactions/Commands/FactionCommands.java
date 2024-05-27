@@ -46,7 +46,6 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
         }
         // Definisci player
         Player player = (Player) sender;
-        OfflinePlayer offlinePlayer = (OfflinePlayer) player;
 
         if (args.length == 0) {
             // TODO: LISTA HELP
@@ -668,7 +667,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                                     String onlinePlayerFactionName = factionManager.playerFactions.get(onlinePlayer.getUniqueId().toString());
                                     if (factionNameAlly.equals(onlinePlayerFactionName) || factionAlly.getAllies().contains(onlinePlayerFactionName)) {
-                                        onlinePlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+                                        onlinePlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allychat-prefix").replace("%faction%", factionNameAlly) + " "  + ChatColor.WHITE + sender.getName() + ChatColor.GRAY + ": " + message ));
                                     }
                                 }
                                 break;
