@@ -63,8 +63,18 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 String factionName = args[1];
                 String tag = args[2];
 
-                if (tag.length() > 4) {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-create-taglenght")));
+                int factionMaxNameLegnght = RageFactions.instance.getConfig().getInt("factionMaxNameLegnght");
+                String factionMaxNameLegnghtForReplace = RageFactions.instance.getConfig().getString("factionMaxNameLegnght");
+
+                int factionMaxTagLenght = RageFactions.instance.getConfig().getInt("factionMaxTagLenght");
+                String factionMaxTagLenghtForReplace = RageFactions.instance.getConfig().getString("factionMaxTagLenght");
+
+                if (tag.length() > factionMaxTagLenght) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-create-taglenght").replace("%s", factionMaxTagLenghtForReplace)));
+                    return true;
+                }
+                if (factionName.length() > factionMaxNameLegnght) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-createnameleght").replace("%s", factionMaxNameLegnghtForReplace)));
                     return true;
                 }
 

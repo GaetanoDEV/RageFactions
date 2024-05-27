@@ -4,7 +4,6 @@ import it.gaetanodev.ragefactions.Faction;
 import it.gaetanodev.ragefactions.FactionManager;
 import it.gaetanodev.ragefactions.RageFactions;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

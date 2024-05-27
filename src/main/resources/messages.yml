@@ -6,7 +6,8 @@
 
 player-command: "&cQuesto messaggio è eseguibile solo da un giocatore."
 faction-createnospecific: "&cDevi specificare un nome e un TAG"
-faction-create-taglenght: "&cIl TAG deve essere lungo massimo 4 caratteri"
+faction-create-taglenght: "&cIl TAG deve essere lungo massimo %s caratteri"
+faction-createnameleght: "&cIl nome può contenere massimo %s caratteri"
 faction-namespecific: "&cDevispecificare un nome"
 faction-alreadyexist: "&cLa fazione è già esistente"
 faction-broadcast: "&bha appena creato la fazione"

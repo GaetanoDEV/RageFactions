@@ -6,9 +6,5 @@
 ################################
 
 homeTeleportDelay: 3
-
-Ranks:
-  - Membro
-  - Anziano
-  - Moderatore
-  - Leader
+factionMaxNameLegnght: 8
+factionMaxTagLenght: 4
