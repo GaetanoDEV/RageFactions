@@ -84,6 +84,11 @@ public class Faction {
         return home;
     }
 
+    public Location getHomeFaction(String name) {
+        this.name = name;
+        return home;
+    }
+
     // Imposta la posizione della base della fazione
     public void setHome(Location home) {
         this.home = home;
@@ -171,6 +176,11 @@ public class Faction {
     public void setBank(double bank) {
         this.bank = bank;
     }
+    // Modifica il Bank per una fazione
+    public void setBankFaction(String name, double bank) {
+        this.name = name;
+        this.bank = bank;
+    }
     // Aggiunge l'ammontare al valore della banca
     public void deposit(double amount) {
         this.bank += amount;
@@ -181,6 +191,11 @@ public class Faction {
     }
     // Imposta il power della fazione
     public void setPower(int power) {
+        this.power = power;
+    }
+    // Modifica il power per una fazione
+    public void setPowerFaction(String name, int power) {
+        this.name = name;
         this.power = power;
     }
     // Aumenta il power della fazione di 1

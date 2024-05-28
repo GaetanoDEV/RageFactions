@@ -12,4 +12,10 @@ commands:
     aliases:
       - faction
       - factions
-    
+  fadmin:
+    description: Comandi Admin
+    usage: /fadmin <arg>
+    aliases:
+      - factionadmin
+      - factionsadmin
+    permission: ragefactions.admin

@@ -7,6 +7,7 @@
 
 package it.gaetanodev.ragefactions;
 
+import it.gaetanodev.ragefactions.Commands.FactionAdminCommands;
 import it.gaetanodev.ragefactions.Commands.FactionCommands;
 import it.gaetanodev.ragefactions.Events.FriendlyFire;
 import it.gaetanodev.ragefactions.Events.PowerManager;
@@ -32,7 +33,6 @@ public final class RageFactions extends JavaPlugin {
     private File factionsFile;
     private FactionManager factionManager;
     private static Economy econ = null;
-    public Map<String, String> playerFactions = new HashMap<>();
 
 
 
@@ -68,6 +68,9 @@ public final class RageFactions extends JavaPlugin {
         this.getCommand("f").setExecutor(new FactionCommands(factionManager));
         this.getCommand("f").setTabCompleter(new FactionCommands(factionManager));
 
+        this.getCommand("fadmin").setExecutor(new FactionAdminCommands(factionManager));
+        this.getCommand("fadmin").setTabCompleter(new FactionAdminCommands(factionManager));
+
 
         // Definisci instance per onEnable()
         instance = this;
@@ -94,17 +97,6 @@ public final class RageFactions extends JavaPlugin {
         // Registra i Placeholders
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { //
             new PlaceholdersManager(this, factionManager).register();
-        }
-
-        // Carica i rank dal config.yml
-        List<String> rankNames = getConfig().getStringList("Ranks");
-        for (String rankName : rankNames) {
-            try {
-                Rank rank = Rank.valueOf(rankName.toUpperCase());
-                ranks.add(rank);
-            } catch (IllegalArgumentException e) {
-                getLogger().severe("Rank non valido: " + rankName);
-            }
         }
     }
 

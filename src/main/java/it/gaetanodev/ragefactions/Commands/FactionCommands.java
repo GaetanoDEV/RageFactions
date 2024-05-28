@@ -1,7 +1,6 @@
 ////////////////////////////////
 //                            //
-//   CLASSE GESTORE FAZIONI   //
-//         METODI ETC         //
+//   CLASSE GESTORE COMANDI   //
 //                            //
 ////////////////////////////////
 
@@ -200,20 +199,6 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     }
                 } else {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-dontexist")));
-                }
-                break;
-            // Comando reload
-            case "reload":
-                if (player.hasPermission("ragefactions.admin")) {
-                    // Ricarica i messaggi
-                    RageFactions.messages.reloadMessages();
-                    // Ricarica il config.yml
-                    RageFactions.instance.reloadConfig();
-                    // Ricarica le fazioni
-                    RageFactions.instance.reloadFactions();
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-reloaded")));
-                } else {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("no-permission")));
                 }
                 break;
             // Comando leave
@@ -734,7 +719,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "demote", "setrank", "members", "ally", "bank", "deposit", "reload")
+            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "demote", "setrank", "members", "ally", "bank", "deposit")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
                     .collect(Collectors.toList());

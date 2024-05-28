@@ -76,7 +76,6 @@ faction-killer-power: "&bHai guandagnato 1 Power dall'Uccisione"
 faction-killed-decreasepower: "&cHai perso 1 Power per essere stato Ucciso."
 
 
-
 ################################
 #                              #
 #        MESSAGGI ADMIN        #
@@ -84,4 +83,28 @@ faction-killed-decreasepower: "&cHai perso 1 Power per essere stato Ucciso."
 ################################
 
 faction-reloaded: "&bRageFaction ricaricato correttamente"
+faction-admin-deleted: "&bLa fazione %s è stata eliminata!"
+faction-admin-newpower: "&bIl Power della fazione %s è ora %p."
+faction-admin-number: "&cIl power definito deve essere un numero!"
+faction-admin-newbank: "&bHai impostato i soldi di %s a %b"
+faction-admin-gethome: "&bLa home della Fazione %s è alle coordinate:"
+faction-admin-gethome-world: "&bMondo:"
+faction-admin-gethome-x: "&bX:"
+faction-admin-gethome-y: "&bY:"
+faction-admin-gethome-z: "&bZ:"
 no-permission: "&cNon hai il permesso."
+
+
+################################
+#                              #
+#           MESSAGGI           #
+#             HELP             #
+#                              #
+################################
+
+adminhelp: "&bLista comandi Admin:"
+adminhelp-reload: "&3⊳ &f/fadmin reload &7- &bRicarica le configurazioni"
+adminhelp-setpower: "&3⊳ &f/fadmin setpower <Fazione> <Power> &7- &bImposta il Power di una fazione"
+adminhelp-setbank: "&3⊳ &f/fadmin setbank <Fazione> <Valore> &7- &bImposta il valore della banca di un Fazione"
+adminhelp-gethome: "&3⊳ &f/fadmin gethome <Fazione> &7- &bStampa i dettagli della home della Fazione"
+
