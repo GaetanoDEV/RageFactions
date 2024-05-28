@@ -710,6 +710,52 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 Faction factionEconomyBank = factionManager.getFaction(player);
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-bankbalance") + " " + RageFactions.getEconomy().format(factionEconomyBank.getBank())));
                 break;
+                // Comando info
+            case "info":
+                if (args.length < 2) {
+                    Faction factionInfo = factionManager.getFaction(player);
+                    if (factionInfo == null) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
+                        return true;
+                    }
+                    String name = factionInfo.getName();
+                    String factionTag = factionInfo.getTag();
+                    String leaderName = factionInfo.getLeaderName();
+                    String factionBankInfo = String.valueOf(factionInfo.getBank());
+                    String power = String.valueOf(factionInfo.getPower());
+
+                    player.sendMessage(" ");
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-info")));
+                    player.sendMessage(" ");
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-info-name") + " " + name));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-info-tag") + " " + factionTag));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-info-leader") + " " + leaderName));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-info-bank") + " " + factionBankInfo));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-info-power") + " " + power));
+                    player.sendMessage(" ");
+
+                }else if (args[1] != null) {
+                    String factionDefined = args[1];
+
+                    Faction factionInfoOther = factionManager.factions.get(factionDefined);
+
+                    String nameOther = factionInfoOther.getName();
+                    String factionTagOther = factionInfoOther.getTag();
+                    String leaderNameOther = factionInfoOther.getLeaderName();
+                    String factionBankOther = String.valueOf(factionInfoOther.getBank());
+                    String powerOther = String.valueOf(factionInfoOther.getPower());
+
+                    player.sendMessage(" ");
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-info")));
+                    player.sendMessage(" ");
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-info-name") + " " + nameOther));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-info-tag") + " " + factionTagOther));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-info-leader") + " " + leaderNameOther));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-info-bank") + " " + factionBankOther));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-info-power") + " " + powerOther));
+                    player.sendMessage(" ");
+                }
+                break;
                 // ALTRI COMANDI
         }
         return true;
@@ -719,7 +765,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "demote", "setrank", "members", "ally", "bank", "deposit")
+            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "demote", "setrank", "members", "ally", "bank", "deposit", "info")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
                     .collect(Collectors.toList());

@@ -74,6 +74,12 @@ faction-withdrawsuccess: "&bHai prelevato %s dalla banca della tua fazione."
 faction-withdrawfail: "&cTransazione fallita."
 faction-killer-power: "&bHai guandagnato 1 Power dall'Uccisione"
 faction-killed-decreasepower: "&cHai perso 1 Power per essere stato Ucciso."
+faction-info: "&bInformazioni Fazione:"
+faction-info-name: "&bNome:"
+faction-info-tag: "&bTAG:"
+faction-info-leader: "&bLeader:"
+faction-info-bank: "&bBanca:"
+faction-info-power: "&bPower:"
 
 
 ################################
