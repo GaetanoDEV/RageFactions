@@ -80,6 +80,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-deposit")));
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-bank")));
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-members")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-leaderboard")));
             player.sendMessage(" ");
             return true;
         }
