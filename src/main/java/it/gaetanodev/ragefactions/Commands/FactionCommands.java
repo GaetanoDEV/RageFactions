@@ -31,10 +31,12 @@ import java.util.stream.Collectors;
 
 public class FactionCommands implements CommandExecutor, TabCompleter {
     private final FactionManager factionManager;
+    private final RageFactions plugin;
 
-    public FactionCommands(FactionManager factionManager) {
+    public FactionCommands(FactionManager factionManager, RageFactions plugin) {
         this.factionManager = factionManager;
 
+        this.plugin = plugin;
     }
 
     @Override
@@ -47,7 +49,40 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            // TODO: LISTA HELP
+
+            String version = plugin.getPluginMeta().getVersion();
+
+            player.sendMessage(" ");
+            player.sendMessage(ChatColor.AQUA + "     " + "Rage" + ChatColor.WHITE + "Factions" + " " + ChatColor.GRAY + "(" + ChatColor.WHITE + "v" + version + ChatColor.GRAY + ")");
+            player.sendMessage(ChatColor.AQUA + "  " + "developed by" + ChatColor.DARK_AQUA + " Gaethanos__");
+            player.sendMessage(" ");
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("helpcommands")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-list")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-chat")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-sethome")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-info")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-ranks")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-join")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-leave")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-ally-add")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-ally-remove")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-ally-chat")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-invite")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-kick")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-uninvite")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-setrank")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-promote")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-demote")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-create")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-disband")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-rename")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-tag")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-open")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-admin")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-deposit")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-bank")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-members")));
+            player.sendMessage(" ");
             return true;
         }
         switch (args[0].toLowerCase()) {
@@ -736,8 +771,12 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
 
                 }else if (args[1] != null) {
                     String factionDefined = args[1];
-
                     Faction factionInfoOther = factionManager.factions.get(factionDefined);
+
+                    if (factionInfoOther == null) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-dontexist")));
+                        return true;
+                    }
 
                     String nameOther = factionInfoOther.getName();
                     String factionTagOther = factionInfoOther.getTag();
