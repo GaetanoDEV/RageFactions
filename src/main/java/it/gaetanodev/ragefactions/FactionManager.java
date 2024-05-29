@@ -11,12 +11,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class FactionManager {
     public Map<String, Faction> factions = new HashMap<>();
     public Map<String, String> playerFactions = new HashMap<>();
+    public Map<String, Set<String>> allianceInvites = new HashMap<>();
 
     // Metodo per creare una nuova fazione
     public void createFaction(String name, String tag, Player leader) {
@@ -81,25 +81,35 @@ public class FactionManager {
         }
     }
 
-    // Metodo per creare un'alleanza tra due fazioni
-    public void createAlliance(String factionName1, String factionName2) {
+    // Metodo per accettare un'alleanza tra due fazioni
+    public void acceptAlliance(String factionName1, String factionName2) {
         Faction faction1 = factions.get(factionName1);
-        if (faction1 == null) {
-            return;
-        }
         Faction faction2 = factions.get(factionName2);
-        if (faction2 == null) {
+        if (faction1 == null || faction2 == null) {
             return;
         }
-        faction1.addAlly(factionName2);
-        faction2.addAlly(factionName1);
-        RageFactions.instance.saveFaction(faction1);
-        RageFactions.instance.saveFaction(faction2);
 
-        // Invia un messaggio al leader della fazione 2
-        Player leader2 = faction2.getLeader().getPlayer();
-        if (leader2 != null && leader2.isOnline()) {
-            leader2.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allyaddedleader").replace("%s", factionName1)));
+        // Rimuovi l'invito dall'elenco degli inviti pendenti
+        Set<String> invites = allianceInvites.get(factionName2);
+        if (invites != null && invites.contains(factionName1)) {
+            // Crea l'alleanza
+            faction1.addAlly(factionName2);
+            faction2.addAlly(factionName1);
+            invites.remove(factionName1);
+
+            // Salva le fazioni
+            RageFactions.instance.saveFaction(faction1);
+            RageFactions.instance.saveFaction(faction2);
+
+            // Invia un messaggio di conferma ai leader di entrambe le fazioni
+            Player leader1 = faction1.getLeader().getPlayer();
+            if (leader1 != null && leader1.isOnline()) {
+                leader1.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allyacceptedally").replace("%s", factionName2)));
+            }
+            Player leader2 = faction2.getLeader().getPlayer();
+            if (leader2 != null && leader2.isOnline()) {
+                leader2.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allyaccepted").replace("%s", factionName1)));
+            }
         }
     }
 
@@ -124,11 +134,34 @@ public class FactionManager {
             leader2.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allyremovedleader").replace("%s", factionName1)));
         }
     }
+    // Metodo per creare un invito per le alleanze
+    public void inviteToAlliance(String factionName1, String factionName2) {
+        Faction faction1 = factions.get(factionName1);
+        Faction faction2 = factions.get(factionName2);
+        if (faction1 == null || faction2 == null) {
+            return;
+        }
+
+        // Aggiungi l'invito alla mappa
+        allianceInvites.computeIfAbsent(factionName2, k -> new HashSet<>()).add(factionName1);
+
+        // Invia un messaggio al leader della fazione invitata
+        Player leader2 = faction2.getLeader().getPlayer();
+        if (leader2 != null && leader2.isOnline()) {
+            leader2.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allyinvite").replace("%s", factionName1)));
+        }
+    }
+
 
     // Restituisce la fazione di un giocatore
     public Faction getFaction(Player player) {
         String factionName = playerFactions.get(player.getUniqueId().toString());
         return factions.get(factionName);
+    }
+
+    // Restiuisce la mappa delle fazioni
+    public Map<String, Faction> getFactions() {
+        return factions;
     }
 }
 
