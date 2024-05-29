@@ -65,6 +65,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-join")));
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-leave")));
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-ally-add")));
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-ally-accept")));
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-ally-remove")));
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-ally-chat")));
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("help-invite")));
