@@ -23,10 +23,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FactionCommands implements CommandExecutor, TabCompleter {
@@ -799,6 +796,28 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(" ");
                 }
                 break;
+            // Comando leaderboard
+            case "leaderboard":
+                List<Faction> sortedFactions = new ArrayList<>(factionManager.getFactions().values());
+                sortedFactions.sort((f1, f2) -> Integer.compare(f2.getPower(), f1.getPower()));
+
+                String rankColor = RageFactions.instance.getConfig().getString("top-rankcolor");
+                String nameColor = RageFactions.instance.getConfig().getString("top-namecolor");
+                String afterNameColor = RageFactions.instance.getConfig().getString("top-aftername-color");
+                String powerColor = RageFactions.instance.getConfig().getString("top-powercolor");
+                String powerSymbol = RageFactions.instance.getConfig().getString("top-powersymbol");
+
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-top")));
+                for (int i = 0; i < Math.min(10, sortedFactions.size()); i++) {
+                    Faction factionTop = sortedFactions.get(i);
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                            rankColor + (i + 1) + ". " +
+                                    nameColor + factionTop.getName() + " " +
+                                    afterNameColor + "- " + " " +
+                                    powerColor + factionTop.getPower() + " " +
+                                    powerSymbol));
+                }
+                break;
                 // ALTRI COMANDI
         }
         return true;
@@ -808,7 +827,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "demote", "setrank", "members", "ally", "bank", "deposit", "info")
+            return Arrays.asList("create", "join", "disband", "list", "kick", "leave", "home", "sethome", "chat", "tag", "admin", "open", "invite", "uninvite", "rename", "ranks", "promote", "demote", "setrank", "members", "ally", "bank", "deposit", "info", "leaderboard")
                     .stream()
                     .filter(s -> s.startsWith(args[0]))
                     .collect(Collectors.toList());
