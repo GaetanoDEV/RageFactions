@@ -4,8 +4,13 @@ import it.gaetanodev.ragefactions.Faction;
 import it.gaetanodev.ragefactions.FactionManager;
 import it.gaetanodev.ragefactions.RageFactions;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class PlaceholdersManager extends PlaceholderExpansion {
     private final FactionManager factionManager;
@@ -28,11 +33,58 @@ public class PlaceholdersManager extends PlaceholderExpansion {
     public @NotNull String getVersion() {
         return "1.0";
     }
+
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
         if (player == null) {
             return "";
         }
+
+////////////////////////////////
+//                            //
+//        PLACEHOLDERS        //
+//         LEADERBOARD        //
+//                            //
+////////////////////////////////
+
+
+        String rankColor = RageFactions.instance.getConfig().getString("top-rankcolor");
+        String nameColor = RageFactions.instance.getConfig().getString("top-namecolor");
+        String afterNameColor = RageFactions.instance.getConfig().getString("top-aftername-color");
+        String powerColor = RageFactions.instance.getConfig().getString("top-powercolor");
+        String powerSymbol = RageFactions.instance.getConfig().getString("top-powersymbol");
+
+        // Gestione dei segnaposto per la top delle fazioni per power
+        if (identifier.startsWith("powertop")) {
+            List<Faction> sortedFactions = new ArrayList<>(factionManager.getFactions().values());
+            sortedFactions.sort((f1, f2) -> Integer.compare(f2.getPower(), f1.getPower()));
+
+            int rank;
+            try {
+                rank = Integer.parseInt(identifier.substring(8));
+            } catch (NumberFormatException e) {
+                return "-";
+            }
+
+            if (rank > 0 && rank <= sortedFactions.size()) {
+                Faction faction = sortedFactions.get(rank - 1);
+                return ChatColor.translateAlternateColorCodes('&', rankColor + rank + ". " +
+                        nameColor + faction.getName() + " " +
+                        afterNameColor + "- " + " " +
+                        powerColor + faction.getPower() + " " +
+                        powerSymbol);
+            } else {
+                return "-";
+            }
+        }
+
+
+////////////////////////////////
+//                            //
+//        PLACEHOLDERS        //
+//          GENERALI          //
+//                            //
+////////////////////////////////
 
         // Ottieni la fazione del giocatore
         Faction faction = factionManager.getFaction(player);
