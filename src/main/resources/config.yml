@@ -5,9 +5,12 @@
 #                              #
 ################################
 
-homeTeleportDelay: 3
-factionMaxNameLegnght: 8
-factionMaxTagLenght: 4
+homeTeleportDelay: 3 # Tempo in secondi per il teleport del giocatore alla Home
+factionMaxNameLegnght: 8 # Numero di caratteri massimi per il Nome del Faction
+factionMaxTagLenght: 4 # Numero di caratteri massimi per la TAG
+faction-newmember-command: "lp user %s permission set ragefactions.member" # Permesso da aggiungere in caso di create o join
+faction-memberleave-command: "lp user %s permission unset ragefactions.member" # Permesso da rimuovere in caso di leave, kick, o disband
+kill-moneypercent: 0.05 # 0.05 = 5%, 1 = 100%, Es: 25% = 0.25
 top-rankcolor: "&f" # Colore del numero del Rank (Es: 1.)
 top-namecolor: "&b" # Colore del nome della Fazione in top
 top-hashtag: "#"

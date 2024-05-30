@@ -10,6 +10,7 @@ package it.gaetanodev.ragefactions;
 import it.gaetanodev.ragefactions.Commands.FactionAdminCommands;
 import it.gaetanodev.ragefactions.Commands.FactionCommands;
 import it.gaetanodev.ragefactions.Events.FriendlyFire;
+import it.gaetanodev.ragefactions.Events.PlayerKillMoneyEvent;
 import it.gaetanodev.ragefactions.Events.PowerManager;
 import it.gaetanodev.ragefactions.Placeholders.PlaceholdersManager;
 import net.milkbowl.vault.economy.Economy;
@@ -17,29 +18,42 @@ import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public final class RageFactions extends JavaPlugin {
     public static RageFactions instance;
     public static Messages messages;
+    private static Economy econ = null;
     public FileConfiguration factionsConfig;
     public List<Rank> ranks = new ArrayList<>();
     private File factionsFile;
     private FactionManager factionManager;
-    private static Economy econ = null;
-
 
 
 ////////////////////////////////
 //                            //
 //         METODO DI          //
 //         OnEnable()         //
+//                            //
+////////////////////////////////
+
+    public static Economy getEconomy() {
+        return econ;
+    }
+
+
+////////////////////////////////
+//                            //
+//     METODI DI GESTIONE     //
+//  E CREAZIONE DELLE CONFIG  //
+//       DELLE FAZIONI        //
 //                            //
 ////////////////////////////////
 
@@ -62,11 +76,14 @@ public final class RageFactions extends JavaPlugin {
         getServer().getPluginManager().registerEvents(listener, this);
         // Registra il listener di PowerManager
         PowerManager listenerPower = new PowerManager(factionManager);
-        getServer().getPluginManager().registerEvents(listenerPower,this);
+        getServer().getPluginManager().registerEvents(listenerPower, this);
+        // Registra il listener di PlayerKillMoneyEvent
+        PlayerKillMoneyEvent playerKillMoneyEvent = new PlayerKillMoneyEvent();
+        getServer().getPluginManager().registerEvents(playerKillMoneyEvent, this);
 
         // REGISTRA I COMANDI & TAB COMPLETER
-        this.getCommand("f").setExecutor(new FactionCommands(factionManager));
-        this.getCommand("f").setTabCompleter(new FactionCommands(factionManager));
+        this.getCommand("f").setExecutor(new FactionCommands(factionManager, this));
+        this.getCommand("f").setTabCompleter(new FactionCommands(factionManager, this));
 
         this.getCommand("fadmin").setExecutor(new FactionAdminCommands(factionManager));
         this.getCommand("fadmin").setTabCompleter(new FactionAdminCommands(factionManager));
@@ -84,30 +101,21 @@ public final class RageFactions extends JavaPlugin {
         loadFactions();
 
         // Crea un istanza per Vault e controllane l'installazione
-        if (!setupEconomy() ) {
+        if (!setupEconomy()) {
             getLogger().severe("Disabilitato a causa della mancanza di Vault");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
         // Controlla se PAPI è installato
-            if (getServer().getPluginManager().getPlugin("PlaceholderAPI") == null) {
-                getLogger().severe("Disabilitato a causa della mancanza di PlaceholderAPI");
-                getServer().getPluginManager().disablePlugin(this);
-            }
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") == null) {
+            getLogger().severe("Disabilitato a causa della mancanza di PlaceholderAPI");
+            getServer().getPluginManager().disablePlugin(this);
+        }
         // Registra i Placeholders
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { //
             new PlaceholdersManager(this, factionManager).register();
         }
     }
-
-
-////////////////////////////////
-//                            //
-//     METODI DI GESTIONE     //
-//  E CREAZIONE DELLE CONFIG  //
-//       DELLE FAZIONI        //
-//                            //
-////////////////////////////////
 
     private void createFactionsFile() {
         this.factionsConfig = factionsConfig;
@@ -166,7 +174,6 @@ public final class RageFactions extends JavaPlugin {
         }
     }
 
-
     // Metodo di reload delle fazioni
     public void reloadFactions() {
         factionManager.factions.clear();
@@ -174,6 +181,12 @@ public final class RageFactions extends JavaPlugin {
         RageFactions.instance.loadFactions();
     }
 
+////////////////////////////////
+//                            //
+//          GESTIONE          //
+//          ECONOMIA          //
+//                            //
+////////////////////////////////
 
     // Carica le factions.yml
     public void loadFactions() {
@@ -228,14 +241,6 @@ public final class RageFactions extends JavaPlugin {
         }
     }
 
-////////////////////////////////
-//                            //
-//          GESTIONE          //
-//          ECONOMIA          //
-//                            //
-////////////////////////////////
-
-
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
@@ -246,9 +251,6 @@ public final class RageFactions extends JavaPlugin {
         }
         econ = rsp.getProvider();
         return econ != null;
-    }
-    public static Economy getEconomy() {
-        return econ;
     }
 
     // Metodo di spegnimento del Server

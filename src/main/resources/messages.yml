@@ -89,6 +89,8 @@ faction-info-leader: "&bLeader:"
 faction-info-bank: "&bBanca:"
 faction-info-power: "&bPower:"
 faction-top: "&7--- &bTop 10 Fazioni per Power &7---"
+killed-moneylost: "&bHai perso il 5% dei tuoi soldi: %s"
+killer-moneyerned: "&bHai guadagnato il 5% dei soldi dalla kill: %s"
 
 
 ################################

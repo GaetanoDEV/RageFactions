@@ -1,5 +1,5 @@
 name: RageFactions
-version: '1.0'
+version: '1.0-beta1'
 main: it.gaetanodev.ragefactions.RageFactions
 api-version: '1.20'
 depend:

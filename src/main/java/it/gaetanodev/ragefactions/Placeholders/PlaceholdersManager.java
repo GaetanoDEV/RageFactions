@@ -103,7 +103,7 @@ public class PlaceholdersManager extends PlaceholderExpansion {
             if (playerFaction == null) {
                 return " ";
             }
-            return  String.valueOf(playerFaction.getMembers().size());
+            return String.valueOf(playerFaction.getMembers().size());
         }
 
 

@@ -15,6 +15,7 @@ public class PowerManager implements Listener {
     public PowerManager(FactionManager factionManager) {
         this.factionManager = factionManager;
     }
+
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player killed = event.getEntity();
@@ -33,8 +34,8 @@ public class PowerManager implements Listener {
                 killerFaction.increasePower();
                 RageFactions.instance.saveFaction(killerFaction);
                 killer.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-killer-power")));
-                }
             }
         }
     }
+}
 

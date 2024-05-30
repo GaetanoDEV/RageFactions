@@ -11,7 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -103,7 +102,7 @@ public class FactionAdminCommands implements CommandExecutor, TabCompleter {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-admin-number")));
                     }
                     break;
-                    // Comando setbank
+                // Comando setbank
                 case "setbank":
                     if (args.length < 3) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-namespecific")));
@@ -124,11 +123,11 @@ public class FactionAdminCommands implements CommandExecutor, TabCompleter {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-admin-newbank").replace("%s", factionToEditBank).replace("%b", newBank)));
                         RageFactions.instance.saveFaction(factionBank);
                         RageFactions.instance.reloadFactions();
-                    }catch (NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-admin-number")));
                     }
                     break;
-                    // Comando gethome
+                // Comando gethome
                 case "gethome":
                     if (args.length < 2) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-namespecific")));
@@ -166,7 +165,7 @@ public class FactionAdminCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-admin-gethome-z") + " " + homeZ));
 
                     break;
-                    // Comando reload
+                // Comando reload
                 case "reload":
                     RageFactions.instance.saveFactions();
                     RageFactions.instance.reloadFactions();
@@ -174,7 +173,7 @@ public class FactionAdminCommands implements CommandExecutor, TabCompleter {
                     RageFactions.messages.reloadMessages();
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-reloaded")));
                     break;
-                    // ALTRI COMANDI
+                // ALTRI COMANDI
             }
         } else
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("no-permission")));

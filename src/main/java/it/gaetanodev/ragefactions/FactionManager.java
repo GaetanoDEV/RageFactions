@@ -11,7 +11,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class FactionManager {
     public Map<String, Faction> factions = new HashMap<>();
@@ -134,6 +137,7 @@ public class FactionManager {
             leader2.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allyremovedleader").replace("%s", factionName1)));
         }
     }
+
     // Metodo per creare un invito per le alleanze
     public void inviteToAlliance(String factionName1, String factionName2) {
         Faction faction1 = factions.get(factionName1);

@@ -8,8 +8,11 @@
 
 package it.gaetanodev.ragefactions;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
@@ -25,6 +28,7 @@ public class Faction {
     private Set<String> allies = new HashSet<>();
     private double bank;
     private int power;
+    private Player playerPermission;
 
     public Faction(String name, String tag, OfflinePlayer leader) {
         // Costruttore che inizializza una nuova Fazione con nome, tag e leader forniti
@@ -34,6 +38,7 @@ public class Faction {
         this.members.add(leader);
         this.tag = tag;
         this.invites = new HashSet<>();
+
         setRank(leader, Rank.LEADER);
     }
 
@@ -41,6 +46,10 @@ public class Faction {
     public void addMember(OfflinePlayer player) {
         members.add(player);
         setRank(player, Rank.MEMBRO);
+
+        ConsoleCommandSender consoleCommandSender = Bukkit.getServer().getConsoleSender();
+        String command = RageFactions.instance.getConfig().getString("faction-newmember-command").replace("%s", player.getName());
+        Bukkit.dispatchCommand(consoleCommandSender, command);
     }
 
     public String getName() {
@@ -84,14 +93,14 @@ public class Faction {
         return home;
     }
 
-    public Location getHomeFaction(String name) {
-        this.name = name;
-        return home;
-    }
-
     // Imposta la posizione della base della fazione
     public void setHome(Location home) {
         this.home = home;
+    }
+
+    public Location getHomeFaction(String name) {
+        this.name = name;
+        return home;
     }
 
     public String getTag() {
@@ -158,6 +167,7 @@ public class Faction {
         int nextRankIndex = (currentRank.ordinal() + 1) % ranks.length;
         setRank(member, ranks[nextRankIndex]);
     }
+
     // Diminuisce il rank di un giocatore
     public void demoteMember(OfflinePlayer member) {
         Rank currentRank = getRank(member);
@@ -168,40 +178,49 @@ public class Faction {
         int previousRankIndex = (currentRank.ordinal() - 1) % ranksDemote.length;
         setRank(member, ranksDemote[previousRankIndex]);
     }
+
     // Restituisce l'ammontare della banca
     public double getBank() {
         return bank;
     }
+
     // Imposta il valore della banca
     public void setBank(double bank) {
         this.bank = bank;
     }
+
     // Modifica il Bank per una fazione
     public void setBankFaction(String name, double bank) {
         this.name = name;
         this.bank = bank;
     }
+
     // Aggiunge l'ammontare al valore della banca
     public void deposit(double amount) {
         this.bank += amount;
     }
+
     // Restituisce il power della Fazione
     public int getPower() {
         return power;
     }
+
     // Imposta il power della fazione
     public void setPower(int power) {
         this.power = power;
     }
+
     // Modifica il power per una fazione
     public void setPowerFaction(String name, int power) {
         this.name = name;
         this.power = power;
     }
+
     // Aumenta il power della fazione di 1
     public void increasePower() {
         this.power++;
     }
+
     // Diminuisce il power della Fazione di 1
     public void decreasePower() {
         if (this.power > 0) {

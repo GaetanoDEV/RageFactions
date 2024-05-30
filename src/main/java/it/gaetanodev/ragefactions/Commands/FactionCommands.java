@@ -16,10 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -154,6 +151,11 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                         // Rimuovi tutti i membri della fazione dalla mappa
                         for (OfflinePlayer member : faction.getMembers()) {
                             factionManager.playerFactions.remove(member.getUniqueId().toString());
+
+                            // Rimuovi i permessi ai membri
+                            ConsoleCommandSender consoleCommandSender = Bukkit.getServer().getConsoleSender();
+                            String commanddisband = RageFactions.instance.getConfig().getString("faction-memberleave-command").replace("%s", member.getName());
+                            Bukkit.dispatchCommand(consoleCommandSender, commanddisband);
                         }
 
                         // Rimuovi la fazione dal factions.yml
@@ -222,6 +224,11 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
 
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kicked")));
 
+                            // Rimuovi il permesso al giocatore
+                            ConsoleCommandSender consoleCommandSender = Bukkit.getServer().getConsoleSender();
+                            String commandkick = RageFactions.instance.getConfig().getString("faction-memberleave-command").replace("%s", memberToKick.getName());
+                            Bukkit.dispatchCommand(consoleCommandSender, commandkick);
+
                             if (memberToKick.isOnline()) {
                                 ((Player) memberToKick).sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kickedmember") + " " + factionNameKick));
                             }
@@ -254,6 +261,12 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                             String memberUUIDToCheck = player.getUniqueId().toString() + ":";
                             memberUUIDs.removeIf(uuid -> uuid.startsWith(memberUUIDToCheck));
                             RageFactions.instance.factionsConfig.set("Factions." + factionNameLeave + ".Members", memberUUIDs);
+
+                            // Togli il permesso al giocatore
+                            ConsoleCommandSender consoleCommandSender = Bukkit.getServer().getConsoleSender();
+                            String commandleave = RageFactions.instance.getConfig().getString("faction-memberleave-command").replace("%s", sender.getName());
+                            Bukkit.dispatchCommand(consoleCommandSender, commandleave);
+
                             RageFactions.instance.saveFactions();
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-left")));
                             RageFactions.instance.reloadFactions();
@@ -704,7 +717,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-notmember")));
                 }
                 break;
-                // Comando deposit
+            // Comando deposit
             case "deposit":
                 Faction factionDepositNotMember = factionManager.getFaction(player);
                 if (factionDepositNotMember == null) {
@@ -747,7 +760,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 Faction factionEconomyBank = factionManager.getFaction(player);
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-bankbalance") + " " + RageFactions.getEconomy().format(factionEconomyBank.getBank())));
                 break;
-                // Comando info
+            // Comando info
             case "info":
                 if (args.length < 2) {
                     Faction factionInfo = factionManager.getFaction(player);
@@ -771,7 +784,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-info-power") + " " + power));
                     player.sendMessage(" ");
 
-                }else if (args[1] != null) {
+                } else if (args[1] != null) {
                     String factionDefined = args[1];
                     Faction factionInfoOther = factionManager.factions.get(factionDefined);
 
@@ -819,7 +832,7 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                                     powerSymbol));
                 }
                 break;
-                // ALTRI COMANDI
+            // ALTRI COMANDI
         }
         return true;
     }
