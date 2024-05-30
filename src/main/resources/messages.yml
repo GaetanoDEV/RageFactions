@@ -150,6 +150,6 @@ help-admin: "&3⊳ &f/f admin <nome> &7- &bTrasferisce i tuoi diritti di amminis
 help-deposit: "&3⊳ &f/f deposit <somma di denaro> &7- &bDeposita una somma di denaro nella banca della fazione."
 help-bank: "&3⊳ &f/f bank &7- &bMostra il saldo della banca della tua fazione."
 help-members: "&3⊳ &f/f members &7- &bVisualizza i membri della fazione."
-help-leaderboard: "&3⊳ &f/f members &7- &bVisualizza la TOP 10 Fazioni"
+help-leaderboard: "&3⊳ &f/f leaderboard &7- &bVisualizza la TOP 10 Fazioni"
 
 

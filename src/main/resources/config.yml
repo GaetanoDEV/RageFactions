@@ -10,6 +10,8 @@ factionMaxNameLegnght: 8
 factionMaxTagLenght: 4
 top-rankcolor: "&f" # Colore del numero del Rank (Es: 1.)
 top-namecolor: "&b" # Colore del nome della Fazione in top
+top-hashtag: "#"
+top-onecolor: "&e#" # Colore o simbolo del fazione a prima posizione
 top-aftername-color: "&7" # Colore del trattino divisore
 top-powercolor: "&c" # Colore del numero di Power del fazione
 top-powersymbol: "&4🔥" # Simbolo del Power con colore

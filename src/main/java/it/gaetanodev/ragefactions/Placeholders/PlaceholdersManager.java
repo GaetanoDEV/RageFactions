@@ -49,6 +49,7 @@ public class PlaceholdersManager extends PlaceholderExpansion {
 
 
         String rankColor = RageFactions.instance.getConfig().getString("top-rankcolor");
+        String topHashtag = RageFactions.instance.getConfig().getString("top-hashtag");
         String nameColor = RageFactions.instance.getConfig().getString("top-namecolor");
         String afterNameColor = RageFactions.instance.getConfig().getString("top-aftername-color");
         String powerColor = RageFactions.instance.getConfig().getString("top-powercolor");
@@ -76,6 +77,33 @@ public class PlaceholdersManager extends PlaceholderExpansion {
             } else {
                 return "-";
             }
+        }
+
+        // Placeholder per Rank personale del Faction
+        if (identifier.equals("faction_rank")) {
+            Faction playerFaction = factionManager.getFaction(player);
+            if (playerFaction == null) {
+                return " ";
+            }
+
+            List<Faction> sortedFactions = new ArrayList<>(factionManager.getFactions().values());
+            sortedFactions.sort((f1, f2) -> Integer.compare(f2.getPower(), f1.getPower()));
+
+            int rank = sortedFactions.indexOf(playerFaction) + 1;
+            if (rank == 0) {
+                return "-";
+            }
+            // Se la fazione è al primo posto, usa il colore giallo
+            String nameColorTop1 = rank == 1 ? RageFactions.instance.getConfig().getString("top-onecolor") : RageFactions.instance.getConfig().getString("top-hashtag");
+            return nameColorTop1 + rank;
+        }
+
+        if (identifier.equals("members")) {
+            Faction playerFaction = factionManager.getFaction(player);
+            if (playerFaction == null) {
+                return " ";
+            }
+            return  String.valueOf(playerFaction.getMembers().size());
         }
 
 
