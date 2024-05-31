@@ -20,6 +20,7 @@ import org.bukkit.command.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -705,6 +706,15 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                                         .map(ally -> "- " + ally)
                                         .collect(Collectors.joining("\n"));
                                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allylist") + "\n" + alliesList));
+                                break;
+                            case "chat":
+                                String message = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+                                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                                    String onlinePlayerFactionName = factionManager.playerFactions.get(onlinePlayer.getUniqueId().toString());
+                                    if (factionNameAlly.equals(onlinePlayerFactionName) || factionAlly.getAllies().contains(onlinePlayerFactionName)) {
+                                        onlinePlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allychat-prefix").replace("%faction%", factionNameAlly) + " "  + ChatColor.WHITE + sender.getName() + ChatColor.GRAY + ": " + message ));
+                                    }
+                                }
                                 break;
                             default:
                                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-allyunknown")));
