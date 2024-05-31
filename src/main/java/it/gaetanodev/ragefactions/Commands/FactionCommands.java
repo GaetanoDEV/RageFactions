@@ -199,6 +199,8 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                 }
 
                 String factionNameKick = factionManager.playerFactions.get(player.getUniqueId().toString());
+                String leader = String.valueOf(factionManager.getFaction(player).getLeaderName());
+
 
                 if (factionNameKick != null) {
                     Faction faction = factionManager.factions.get(factionNameKick);
@@ -206,6 +208,11 @@ public class FactionCommands implements CommandExecutor, TabCompleter {
                     if (faction != null && faction.getLeader().equals(player)) {
                         String memberName = args[1];
                         OfflinePlayer memberToKick = Bukkit.getOfflinePlayer(memberName);
+
+                        if (memberName.equals(leader)) {
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', RageFactions.messages.getMessage("faction-kick-leader")));
+                            return true;
+                        }
 
                         // Verifica se il giocatore è un membro della fazione
                         List<String> memberUUIDs = RageFactions.instance.factionsConfig.getStringList("Factions." + factionNameKick + ".Members");
